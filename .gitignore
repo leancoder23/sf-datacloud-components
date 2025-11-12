@@ -34,3 +34,14 @@ $RECYCLE.BIN/
 *.iml
 .idea/
 IlluminatedCloud/
+
+# Added by Illuminated Cloud
+.localdev/
+/out/
+target/
+/.illuminatedCloud/
+**/tsconfig*.json
+**/*.tsbuildinfo
+
+#temp files
+temp/

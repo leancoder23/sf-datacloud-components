@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>UseDataCloudRestApi__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>When this flag is set to true then DataCloud Query Service will use the data cloud connect rest api to execute this query. It is required to setup named credential and auth provider</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Use Data Cloud Rest Api</label>
+    <type>Checkbox</type>
+</CustomField>

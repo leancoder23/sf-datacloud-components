@@ -1,18 +1,23 @@
-# Salesforce DX Project: Next Steps
+# Package Installation 
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+## dcQueryComponents
 
-## How Do You Plan to Deploy Your Changes?
+### Version 
+0.1.0
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+### Publish Status
+Not published
 
-## Configure Your Salesforce DX Project
+### Instalation url  
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04tMz000000BSCHIA4 
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
-
-## Read All About It
-
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+### Other details
+ID                            │ 08cMz0000005gufIAA                                                                │
+│ Status                        │ Success                                                                           │
+│ Package Id                    │ 0HoMz00000011TVKAY                                                                │
+│ Package Version Id            │ 05iMz000000H0BhIAK                                                                │
+│ Subscriber Package Version Id │ 04tMz000000BSCHIA4                                                                │
+│ Tag                           │                                                                                   │
+│ Branch                        │                                                                                   │
+│ Created Date                  │ 2025-11-10 14:10                                                                  │
+│ Created By                    │ 005Mz000008cfWzIAI        

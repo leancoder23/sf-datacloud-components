@@ -1,0 +1,58 @@
+<template>
+
+    <lightning-card title={title} icon-name={iconName}>
+        <div slot="actions">
+            <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data" onclick={refreshData}>
+            </lightning-button-icon>
+        </div>
+
+        <div class="slds-m-around_medium">
+            <template if:true={isLoading}>
+
+                <lightning-spinner alternative-text="Loading..." variant="brand"></lightning-spinner>
+            </template>
+
+            <template if:true={error}>
+                <div class="slds-theme_error" role="alert">
+                        <lightning-accordion allow-multiple-sections-open="true">
+                            <lightning-accordion-section class="error-detail-section" label={genericErrorMessage}>
+                                {error}
+                            </lightning-accordion-section>
+                        </lightning-accordion>
+                </div>
+            </template>
+            {additionalConfig}
+
+            <template if:false={error}>
+                <template if:true={data.length}>
+                        <lightning-datatable
+                                render-mode="default"
+                                key-field="_key"
+                                data={data}
+                                columns={columns}
+                                onnavigatetodatacloudrecord={handleDataCloudRecordClick}
+                                hide-checkbox-column>
+                            <c-data-cloud-custom-url-provider slot="customdatatypes"></c-data-cloud-custom-url-provider>
+                        </lightning-datatable>
+
+                    <div class="slds-align_absolute-center">
+                        <template if:true={data.length}>
+                            {showRecordCount}
+                        </template>
+                        <template if:true={showViewMoreButton}>
+                            &nbsp;<lightning-button
+                                    label={loadMoreButtonLabel}
+                                    variant="base"
+                                    onclick={handleViewMore}>
+                            </lightning-button>
+                        </template>
+                    </div>
+
+                </template>
+                <template if:false={data.length}>
+                    <p class="slds-text-align_center">{noDataMessage}</p>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

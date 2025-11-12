@@ -1,0 +1,33 @@
+<template>
+    <lightning-card title={chartTitle} icon-name="utility:chart">
+        <div slot="actions">
+            <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data" onclick={handleRefresh}>
+            </lightning-button-icon>
+        </div>
+        <div class="slds-p-around_medium">
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading chart data..." size="medium"></lightning-spinner>
+            </template>
+
+            <template if:true={error}>
+                <div class="slds-theme_error" role="alert">
+                    <lightning-accordion allow-multiple-sections-open="true">
+                        <lightning-accordion-section class="error-detail-section" label={genericErrorMessage}>
+                            {error}
+                        </lightning-accordion-section>
+                    </lightning-accordion>
+                </div>
+            </template>
+
+            <template if:false={error}>
+                    <div class="chart-container" style={chartContainerStyle}>
+                        <canvas class="chart" lwc:dom="manual"></canvas>
+                        <template lwc:if={showNoDataMessage}>
+                            <p class="slds-text-align_center">{noDataMessage}</p>
+                        </template>
+                    </div>
+            </template>
+        </div>
+    </lightning-card>
+
+</template>

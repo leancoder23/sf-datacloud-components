@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>DCQR_Data_Not_Found</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Data Not Found</shortDescription>
+        <value>No Data found!</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Generic_Error_Message</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Generic Error Message</shortDescription>
+        <value>Oops! Something went wrong. Please contact administrator</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Load_More</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Label:Load More</shortDescription>
+        <value>Load More</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Showing_Record_Count</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Showing Record Count</shortDescription>
+        <value>Showing {0} of records {1}.</value>
+    </labels>
+</CustomLabels>

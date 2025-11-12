@@ -6,7 +6,7 @@
       "path": "data-cloud-query-components",
       "default": true,
       "package": "dcQueryComponents",
-       "versionDescription": "Consists of two Data Cloud Query result  LWC components to visualize List and Chart. As well as corresponding Apex service to fetch the data from Data Cloud based on Rest service "
+      "versionDescription": "Consists of two Data Cloud Query result  LWC components to visualize List and Chart. As well as corresponding Apex service to fetch the data from Data Cloud based on Rest service "
     },
     {
       "versionName": "ver 0.1",
@@ -19,9 +19,9 @@
         {
           "package": "dcQueryComponents",
           "versionNumber": "0.1.0.LATEST"
-        }
+      }  
       ],
-      "definitionFile": "config/project-scratch-def.json"
+      "definitionFile": "config/project-scratch-def.json" 
     },
     {
       "versionName": "ver 0.1",
@@ -34,15 +34,12 @@
         {
           "package": "dcQueryComponents",
           "versionNumber": "0.1.0.LATEST"
-        }
+      }  
       ]
     }
   ],
   "name": "data-cloud-query-components",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "65.0",
-  "packageAliases": {
-    "dcQueryComponents": "0HoMz00000011ZxKAI"
-  }
+  "sourceApiVersion": "64.0"
 }

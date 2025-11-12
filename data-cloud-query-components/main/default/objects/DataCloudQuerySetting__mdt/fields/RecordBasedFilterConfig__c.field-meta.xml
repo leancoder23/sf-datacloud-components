@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RecordBasedFilterConfig__c</fullName>
+    <description>Record object fields and sql query filter condition pair</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Record object fields and sql query filter condition pair. e.g., contactId:Id|varchar,accountId:accountId|varchar</inlineHelpText>
+    <label>Record-Based Filter Config</label>
+    <length>20000</length>
+    <type>LongTextArea</type>
+    <visibleLines>10</visibleLines>
+</CustomField>

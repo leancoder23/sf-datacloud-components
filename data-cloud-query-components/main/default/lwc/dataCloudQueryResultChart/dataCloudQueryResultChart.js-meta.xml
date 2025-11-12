@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__UrlAddressable</target>
+    </targets>
+
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage, lightning__HomePage,lightning__RecordPage">
+            <property name="chartTitle"
+                      type="String"
+                      label="Card Title" default="Data Cloud Query Chart"/>
+
+            <property name="width"
+                      type="Integer"
+                      label="Container Width"
+                      default="80"
+                      description="Container Width in view port ratio"/>
+            <property name="height"
+                      type="Integer"
+                      label="Container Height"
+                      default="40"
+                      description="Container Height in view port ratio"/>
+
+            <property name="querySettingId"
+                      type="String"
+                      label="Query Setting Identifier"
+                      description="Custom metadata DataCloudQuerySetting__mdt developer name, this is used to fetch the corresponding sql query "/>
+              <property
+                    name="chartConfig"
+                    type="String"
+                    label="Chart.js Config (JSON)"
+                    default='{"type":"bar","dataMap":{"labelField":"field1","dataFields":["field2"]},"options":{"responsive":true,"plugins":{"legend":{"position":"top"}}}}'
+                    description="A JSON configuration for Chart.js. 'dataMap' is a special key to map query fields to chart labels and data."/>
+
+        </targetConfig>
+    </targetConfigs>
+
+</LightningComponentBundle>

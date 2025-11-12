@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Query__c</fullName>
+    <description>Data cloud sql query used by specific uses cases that used by LWC to display the data</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Data cloud sql query. e.g. SELECT Id__c, FirstName__c FROM Individual__dlm 
+or 
+SELECT Id__c, FirstName__c FROM ssot__Account__dlm where Id__c:accountId</inlineHelpText>
+    <label>Query</label>
+    <length>131072</length>
+    <type>LongTextArea</type>
+    <visibleLines>10</visibleLines>
+</CustomField>

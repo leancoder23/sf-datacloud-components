@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__UrlAddressable</target>
+    </targets>
+
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage, lightning__HomePage,lightning__RecordPage">
+            <property name="title" type="String" label="Card Title" default="Data Cloud Query Results"/>
+            <property name="iconName" type="String" label="Card Icon" default="standard:live_data"/>
+            <property name="pageSize" type="Integer" label="Page Size" default="20" min="5" max="100"/>
+            <property name="querySettingId"
+                      type="String"
+                      label="Query Setting Identifier"
+                      description="Custom metadata DataCloudQuerySetting__mdt developer name, this is used to fetch the corresponding sql query "/>
+
+            <property
+                    name="columnConfig"
+                    type="String"
+                    label="Column Configuration (JSON)"
+                    description="JSON string defining the datatable columns."
+                    placeholder='[{"label":"ID", "fieldName":"Id__c"},{"label":"First Name", "fieldName":"FirstName__c"}]'/>
+
+
+
+        </targetConfig>
+
+    </targetConfigs>
+</LightningComponentBundle>
