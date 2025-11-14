@@ -39,7 +39,7 @@ public   class DataCloudQueryServiceProvider {
    }
 
     public static DataCloudQueryServiceProvider.IDataCloudQueryProvider getInstance(){
-
+      
         if(defaultSettings==null){
             throw new DataCloudQueryServiceException('QueryDefault setting expected and it does not exists');
         }

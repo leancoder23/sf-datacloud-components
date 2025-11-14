@@ -60,7 +60,9 @@ public with sharing class DataCloudQueryServiceController {
 
         if(String.isBlank(recordId)
                 || recordFieldParams==null
-                || recordFieldParams.size()==0) return null;
+                || recordFieldParams.size()==0){
+                    return null;
+                }
 
         List<String> recordFieldNames = new List<String>();
         for(RecordFieldParam fieldParam : recordFieldParams){

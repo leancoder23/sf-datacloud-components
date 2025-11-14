@@ -12,7 +12,7 @@ Not published
 https://login.salesforce.com/packaging/installPackage.apexp?p0=04tMz000000BSCHIA4 
 
 ### Other details
-ID                            │ 08cMz0000005gufIAA                                                                │
+ID                              │ 08cMz0000005gufIAA                                                                │
 │ Status                        │ Success                                                                           │
 │ Package Id                    │ 0HoMz00000011TVKAY                                                                │
 │ Package Version Id            │ 05iMz000000H0BhIAK                                                                │

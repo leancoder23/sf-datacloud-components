@@ -1,3 +1,17 @@
 {
-    "xml.preferences.showSchemaDocumentationType": "none"
+  "editor.formatOnSave": true,
+  "files.autoSave": "onFocusChange",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.sfdx": true,
+    "**/.sf": true
+  },
+  "salesforcedx-vscode-core.push-or-deploy-on-save.enabled": false,
+  "salesforcedx-vscode-apex.java.home": "/Library/Java/JavaVirtualMachines/zulu-21.jdk/Contents/Home",
+  "eslint.validate": [ "javascript", "javascriptreact", "html" ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "xml.preferences.showSchemaDocumentationType": "none"
 }
