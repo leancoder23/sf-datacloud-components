@@ -1,23 +1,20 @@
-# Package Installation 
+# General
 
-## dcQueryComponents
+This repository contains Apex services and Lightning Web Components (LWC) that fetch and visualize Salesforce Data Cloud query results. It supports two pluggable backends:
 
-### Version 
-0.1.0
+- Data Cloud REST API (via Named Credential)
+- Data Cloud CDP (native platform APIs)
 
-### Publish Status
-Not published
+No code is required; configuration is done via Custom Metadata and standard Setup.
 
-### Instalation url  
-https://login.salesforce.com/packaging/installPackage.apexp?p0=04tMz000000BSCHIA4 
+# Developer Guide
 
-### Other details
-ID                              │ 08cMz0000005gufIAA                                                                │
-│ Status                        │ Success                                                                           │
-│ Package Id                    │ 0HoMz00000011TVKAY                                                                │
-│ Package Version Id            │ 05iMz000000H0BhIAK                                                                │
-│ Subscriber Package Version Id │ 04tMz000000BSCHIA4                                                                │
-│ Tag                           │                                                                                   │
-│ Branch                        │                                                                                   │
-│ Created Date                  │ 2025-11-10 14:10                                                                  │
-│ Created By                    │ 005Mz000008cfWzIAI        
+Covers architecture, packages, installation, configuration, development, testing, and deployment.
+
+README.dev.md
+
+# Admin Guide
+
+Configuration information
+
+README.user.md

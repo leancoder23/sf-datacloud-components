@@ -8,7 +8,6 @@
             <template if:true={isLoading}>
                 <lightning-spinner alternative-text="Loading chart data..." size="medium"></lightning-spinner>
             </template>
-
             <template if:true={error}>
                 <div class="slds-theme_error" role="alert">
                     <lightning-accordion allow-multiple-sections-open="true">
@@ -18,14 +17,15 @@
                     </lightning-accordion>
                 </div>
             </template>
-
             <template if:false={error}>
+                <template lwc:if={showNoDataMessage}>
+                    <div class="slds-text-align_center">{noDataMessage}</div>
+                </template>
+                <template lwc:else>
                     <div class="chart-container" style={chartContainerStyle}>
                         <canvas class="chart" lwc:dom="manual"></canvas>
-                        <template lwc:if={showNoDataMessage}>
-                            <p class="slds-text-align_center">{noDataMessage}</p>
-                        </template>
                     </div>
+                </template>
             </template>
         </div>
     </lightning-card>

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>64.0</apiVersion>
+    <apiVersion>65.0</apiVersion>
     <isExposed>true</isExposed>
+    <masterLabel>Data Cloud Query List</masterLabel>
+    <description>Accepts any valid SQL query configuration id and lightning datatable configuration json and shows data from Data Cloud</description>
+
     <targets>
         <target>lightning__AppPage</target>
         <target>lightning__RecordPage</target>

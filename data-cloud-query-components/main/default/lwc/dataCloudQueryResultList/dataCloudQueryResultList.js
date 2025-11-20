@@ -7,19 +7,18 @@ import msgDataNotFound from "@salesforce/label/c.DCQR_Data_Not_Found";
 import lblLoadMore from "@salesforce/label/c.DCQR_Load_More";
 import msgGenericErrorMessage from "@salesforce/label/c.DCQR_Generic_Error_Message";
 
-
-
 import {
-    executeDataCloudQuery,
-    getDataCloudQueryResultData,
-    getDataCloudRecordLocalId,
-    formatString} from "c/dataCloudQueryService";
+  executeDataCloudQuery,
+  getDataCloudQueryResultData,
+  getDataCloudRecordLocalId,
+  formatString,
+} from "c/dataCloudQueryService";
 
-
-const MSG_SHOWING_RECORD_COUNT='Showing {0} of records {1}.';
-const MSG_DATA_NOT_FOUND='No Data found!';
-const LABEL_LOAD_MORE='Load More';
-const ERR_GENERIC_MESSAGE='Oops! Something went wrong. Please contact administrator';
+const MSG_SHOWING_RECORD_COUNT = "Showing {0} of records {1}.";
+const MSG_DATA_NOT_FOUND = "No Data found!";
+const LABEL_LOAD_MORE = "Load More";
+const ERR_GENERIC_MESSAGE =
+  "Oops! Something went wrong. Please contact administrator";
 
 export default class DataCloudQueryResultList extends NavigationMixin(
   LightningElement
@@ -39,7 +38,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(
    */
   @api columnConfig;
 
-@api additionalConfig;
+  @api additionalConfig;
 
   // ---------------------- LOCAL STATE PROPERTIES -----------------------
 
@@ -60,20 +59,14 @@ export default class DataCloudQueryResultList extends NavigationMixin(
   // This flag now determines if the 'View More' button should be shown
   hasMoreData = true;
 
-
   // -------------------------- LIFECYCLE HOOKS -----------------------------
-
 
   renderedCallback() {
     if (!this.initialRender) return;
     this.initialRender = false;
 
-    this.setupTestQuery(); //TODO: remove this after testing
     this.parseColumnConfig();
-
     this.loadInitialData();
-
-
   }
 
   // --------------------------- GETTERS -------------------------------
@@ -84,83 +77,29 @@ export default class DataCloudQueryResultList extends NavigationMixin(
   get showViewMoreButton() {
     // Show button if not in an initial load state and there's more data to fetch.
     return !this.isLoading && this.hasMoreData;
-
   }
 
-  get noDataMessage(){
-      return  msgDataNotFound|| MSG_DATA_NOT_FOUND;
+  get noDataMessage() {
+    return msgDataNotFound || MSG_DATA_NOT_FOUND;
   }
 
-  get loadMoreButtonLabel(){
-      return lblLoadMore||LABEL_LOAD_MORE;
+  get loadMoreButtonLabel() {
+    return lblLoadMore || LABEL_LOAD_MORE;
   }
 
-  get genericErrorMessage(){
-      return msgGenericErrorMessage||ERR_GENERIC_MESSAGE;
+  get genericErrorMessage() {
+    return msgGenericErrorMessage || ERR_GENERIC_MESSAGE;
   }
 
-  get showRecordCount(){
-      return formatString(msgShowingRecordCount||MSG_SHOWING_RECORD_COUNT, this.rowsLoaded,this.totalRows);
+  get showRecordCount() {
+    return formatString(
+      msgShowingRecordCount || MSG_SHOWING_RECORD_COUNT,
+      this.rowsLoaded,
+      this.totalRows
+    );
   }
 
   // --------------------------- DATA METHODS -------------------------------
-
-
-  setupTestQuery() {
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (
-      !window.location.pathname.includes("c__dataCloudQueryResultList") ||
-      !urlParams.get("c__test")
-    )
-      return; //do not process if not accessed via url as test
-
-    this.title = "Data Cloud Query Results";
-    this.iconName = "standard:opportunity";
-    this.pageSize = 10;
-
-   this.querySettingId = "ListComponentTestQuery";
-
-    this.columnConfig = `[
-                           {
-                             "label": "Name",
-                             "type": "customDataCloudUrl",
-                             "fieldName": "ssot__Id__c",
-                             "typeAttributes": {
-                               "label": {
-                                 "fieldName": "ssot__OpportunityName__c"
-                               },
-                               "objectName": "ssot__Opportunity__dlm"
-                             },
-                             "initialWidth": 300
-                           },
-                           {
-                             "label": "Close Date",
-                             "fieldName": "ssot__CloseDate__c",
-                             "type": "date",
-                             "initialWidth": 120
-                           },
-                           {
-                             "label": "Size",
-                             "fieldName": "OpportunitySize",
-                             "initialWidth": 150
-                           },
-                           {
-                             "label": "Owner",
-                             "fieldName": "OwnerName",
-                             "initialWidth": 200
-                           },
-                           {
-                             "label": "Source",
-                             "fieldName": "Source",
-                             "initialWidth": 100
-                           }
-                         ]`;
-
-
-    this.recordId = "0019V00000q2bIXQAY";
-
-  }
 
   @api
   async refreshData() {
@@ -179,12 +118,11 @@ export default class DataCloudQueryResultList extends NavigationMixin(
         objectName
       );
 
-
       const pageRef = {
         type: "standard__recordPage",
         attributes: {
           recordId: localRecordId,
-          actionName:'view',
+          actionName: "view",
           objectApiName: objectName,
         },
       };
@@ -192,9 +130,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(
       const url = await this[NavigationMixin.GenerateUrl](pageRef);
       console.log("url", url);
 
-      window.open(url,"__blank");
-
-
+      window.open(url, "__blank");
     } catch (error) {
       console.log(error, error?.message);
       alert("Error occurred");
@@ -205,12 +141,14 @@ export default class DataCloudQueryResultList extends NavigationMixin(
 
   async loadInitialData() {
     try {
-       this.isLoading = true;
+      this.isLoading = true;
 
-        if (!this.querySettingId) {
-            console.log('throwing error');
-             throw new Error( "Query Setting Identifier is not configured. Please set the Query Setting Id in the component properties.");
-         }
+      if (!this.querySettingId) {
+        console.log("throwing error");
+        throw new Error(
+          "Query Setting Identifier is not configured. Please set the Query Setting Id in the component properties."
+        );
+      }
 
       const result = await executeDataCloudQuery(
         this.querySettingId,
@@ -260,16 +198,30 @@ export default class DataCloudQueryResultList extends NavigationMixin(
 
   // -------------------------- HELPER METHODS ------------------------------
 
-
   parseColumnConfig() {
     try {
       if (this.columnConfig) {
-        this.columns = JSON.parse(this.columnConfig);
+        const columns = JSON.parse(this.columnConfig);
+
+        //Consideration for popover cell. If column type is customPopoverCell, then attach typeAttribute for rowData
+        columns.forEach((col) => {
+          if (col.type == "customPopoverCell") {
+            if (!col.typeAttributes) {
+              throw new Error(
+                "typeAttributes are required for customPopoverCell type"
+              );
+            }
+            col.typeAttributes.rowData = { fieldName: "_row" };
+          }
+        });
+
+        this.columns = columns;
       }
     } catch (e) {
       this.columns = [];
-      throw new Error(`Error parsing column configuration JSON. Please check the format. Details: ${e.message}`) ;
-
+      throw new Error(
+        `Error parsing column configuration JSON. Please check the format. Details: ${e.message}`
+      );
     }
   }
 
@@ -278,6 +230,8 @@ export default class DataCloudQueryResultList extends NavigationMixin(
       ...record,
       // Create a unique key for LWC's rendering engine
       _key: `row-${startIndex + index}`,
+      //self reference the entire row to be used by custom data types
+      _row: record,
     }));
   }
 
@@ -290,12 +244,12 @@ export default class DataCloudQueryResultList extends NavigationMixin(
   }
 
   handleError(error) {
-       console.log('handling error');
+    console.log("handling error");
     console.error("Data Cloud Query Result List Error:", error);
 
     this.error = error.body ? error.body.message : error.message;
     // Optionally, show a toast notification
-   /*
+    /*
     this.dispatchEvent(
       new ShowToastEvent({
         title: "Query Error",

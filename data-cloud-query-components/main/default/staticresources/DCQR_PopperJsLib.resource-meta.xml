@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>text/javascript</contentType>
+    <description>Popper js lib (v2.11.8) used by LWC (DataCloudQueryResultListPopoverCell) components to show popover ui element anchored to specific element. Handle the different screen sizes and element position and provide a very consistent ui behaviour.</description>
+</StaticResource>

@@ -1,6 +1,6 @@
 import { LightningElement, api } from "lwc";
 import { loadScript } from "lightning/platformResourceLoader";
-import chartjs from "@salesforce/resourceUrl/chartJsLib";
+import chartjs from "@salesforce/resourceUrl/DCQR_ChartJsLib";
 
 // Import custom labels
 import msgGenericErrorMessage from "@salesforce/label/c.DCQR_Generic_Error_Message";
