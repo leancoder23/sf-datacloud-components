@@ -45,3 +45,5 @@ target/
 
 #temp files
 temp/
+
+**/graphql.config.yml

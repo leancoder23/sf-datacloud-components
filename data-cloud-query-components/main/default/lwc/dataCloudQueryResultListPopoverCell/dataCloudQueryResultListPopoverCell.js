@@ -36,27 +36,29 @@ export default class DataCloudQueryResultListPopoverCell extends LightningElemen
 
   set popoverItems(data) {
     if (data && Array.isArray(data)) {
-      this._popoverItems = data.map((item) => ({
-        ...item,
-        //resolve the field value
-        value: this?.rowData[item.value?.fieldName],
+      this._popoverItems = data.map((item) => {
+        return {
+          ...item,
+          //resolve the field value
+          value: this.rowData[item.fieldName],
 
-        // Inject conditional rendering properties
-        isRichText: item.type === "richtext",
-        isNumber: item.type === "number" || item.type === "integer",
-        isCurrency: item.type === "currency",
-        isDate: item.type === "date",
-        isDateTime: item.type === "datetime",
-        isDefault: ![
-          "richtext",
-          "number",
-          "integer",
-          "currency",
-          "date",
-          "datetime",
-        ].includes(item.type),
-        typeAttributes: item.typeAttributes || {},
-      }));
+          // Inject conditional rendering properties
+          isRichText: item.type === "richtext",
+          isNumber: item.type === "number" || item.type === "integer",
+          isCurrency: item.type === "currency",
+          isDate: item.type === "date",
+          isDateTime: item.type === "datetime",
+          isDefault: ![
+            "richtext",
+            "number",
+            "integer",
+            "currency",
+            "date",
+            "datetime",
+          ].includes(item.type),
+          typeAttributes: item.typeAttributes || {},
+        };
+      });
     } else {
       this._popoverItems = [];
     }

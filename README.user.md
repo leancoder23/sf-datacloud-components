@@ -143,20 +143,20 @@ JSON:
       "popoverWidth": 520,
       "popoverHeight": 180,
       "itemInfo": [
-        { "label": "Name", "value": { "fieldName": "ownerName" } },
+        { "label": "Name", "fieldName": "ownerName" },
         {
           "label": "Email",
-          "value": { "fieldName": "ownerEmail" },
+          "fieldName": "ownerEmail",
           "type": "richtext"
         },
         {
           "label": "Website",
-          "value": { "fieldName": "ownerWebsite" },
+          "fieldName": "ownerWebsite",
           "type": "richtext"
         },
         {
           "label": "Quota Attainment",
-          "value": { "fieldName": "ownerQuotaAttainment" }
+          "fieldName": "ownerQuotaAttainment"
         }
       ]
     }
@@ -208,15 +208,15 @@ Combined Example (Name link + Amount + Owner popover):
       "popoverWidth": 520,
       "popoverHeight": 180,
       "itemInfo": [
-        { "label": "Name", "value": { "fieldName": "ownerName" } },
+        { "label": "Name", "fieldName": "ownerName" },
         {
           "label": "Email",
-          "value": { "fieldName": "ownerEmail" },
+          "fieldName": "ownerEmail",
           "type": "richtext"
         },
         {
           "label": "Website",
-          "value": { "fieldName": "ownerWebsite" },
+          "fieldName": "ownerWebsite",
           "type": "richtext"
         }
       ]

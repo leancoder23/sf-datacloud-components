@@ -108,7 +108,6 @@ export default class DataCloudQueryResultList extends NavigationMixin(
   }
 
   async handleDataCloudRecordClick(event) {
-    console.log(JSON.stringify(event.detail));
     const { recordId, objectName } = event.detail;
     try {
       this.isLoading = true;
@@ -132,8 +131,8 @@ export default class DataCloudQueryResultList extends NavigationMixin(
 
       window.open(url, "__blank");
     } catch (error) {
-      console.log(error, error?.message);
-      alert("Error occurred");
+      console.log("Record Link Error", error, error.message);
+      this.showErrorToast(this.genericErrorMessage);
     } finally {
       this.isLoading = false;
     }
@@ -233,6 +232,17 @@ export default class DataCloudQueryResultList extends NavigationMixin(
       //self reference the entire row to be used by custom data types
       _row: record,
     }));
+  }
+
+  showErrorToast(message) {
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title: "Error",
+        message: message,
+        variant: "error",
+        mode: "sticky",
+      })
+    );
   }
 
   resetState() {

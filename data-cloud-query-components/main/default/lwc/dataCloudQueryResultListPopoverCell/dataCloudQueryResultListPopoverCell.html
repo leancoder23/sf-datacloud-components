@@ -10,8 +10,8 @@
     </div>
 
     <template if:true={isPopoverOpen}>
-        <div class="slds-popover slds-popover_large slds-nubbin_top popper-element" style={popoverStyle} role="dialog" aria-modal="true"
-            data-popper-placement="bottom" >
+        <div class="slds-popover slds-popover_large slds-nubbin_top popper-element" style={popoverStyle} role="dialog"
+            aria-modal="true" data-popper-placement="bottom">
             <div class="slds-popover__header slds-grid slds-grid_align-spread slds-p-around_small">
                 <div class="slds-text-heading_small slds-truncate">
                     <lightning-icon icon-name={popoverIcon} alternative-text="Icon" size="small"
@@ -31,43 +31,36 @@
                                 <span class="slds-form-element__label">{item.label}</span>
                                 <div class="slds-form-element__control">
                                     <template if:true={item.isRichText}>
-                                        <lightning-formatted-rich-text value={item.value}></lightning-formatted-rich-text>
+                                        <lightning-formatted-rich-text
+                                            value={item.value}></lightning-formatted-rich-text>
                                     </template>
                                     <template if:true={item.isNumber}>
-                                        <lightning-formatted-number
-                                                value={item.value}
-                                                format-style="decimal">
+                                        <lightning-formatted-number title={item.value} value={item.value}
+                                            format-style="decimal">
                                         </lightning-formatted-number>
                                     </template>
                                     <template if:true={item.isCurrency}>
-                                        <lightning-formatted-number
-                                                value={item.value}
-                                                format-style="currency"
-                                                currency-code={item.typeAttributes.currencyCode}
-                                                minimum-fraction-digits={item.typeAttributes.minimumFractionDigits}>
+                                        <lightning-formatted-number title={item.value} value={item.value}
+                                            format-style="currency" currency-code={item.typeAttributes.currencyCode}
+                                            minimum-fraction-digits={item.typeAttributes.minimumFractionDigits}>
                                         </lightning-formatted-number>
                                     </template>
                                     <template if:true={item.isDate}>
-                                        <lightning-formatted-date-time
-                                                value={item.value}
-                                                year={item.typeAttributes.year}
-                                                month={item.typeAttributes.month}
-                                                day={item.typeAttributes.day}>
+                                        <lightning-formatted-date-time title={item.value} value={item.value}
+                                            year={item.typeAttributes.year} month={item.typeAttributes.month}
+                                            day={item.typeAttributes.day}>
                                         </lightning-formatted-date-time>
                                     </template>
                                     <template if:true={item.isDateTime}>
-                                        <lightning-formatted-date-time
-                                                value={item.value}
-                                                year={item.typeAttributes.year}
-                                                month={item.typeAttributes.month}
-                                                day={item.typeAttributes.day}
-                                                hour={item.typeAttributes.hour}
-                                                minute={item.typeAttributes.minute}
-                                                second={item.typeAttributes.second}>
+                                        <lightning-formatted-date-time title={item.value} value={item.value}
+                                            year={item.typeAttributes.year} month={item.typeAttributes.month}
+                                            day={item.typeAttributes.day} hour={item.typeAttributes.hour}
+                                            minute={item.typeAttributes.minute} second={item.typeAttributes.second}>
                                         </lightning-formatted-date-time>
                                     </template>
                                     <template if:true={item.isDefault}>
-                                        <lightning-formatted-text value={item.value}></lightning-formatted-text>
+                                        <lightning-formatted-text title={item.value}
+                                            value={item.value}></lightning-formatted-text>
                                     </template>
                                 </div>
                             </div>
