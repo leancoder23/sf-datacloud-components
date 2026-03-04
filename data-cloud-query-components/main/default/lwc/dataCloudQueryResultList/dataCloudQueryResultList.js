@@ -32,6 +32,9 @@ export default class DataCloudQueryResultList extends NavigationMixin(
 
   @api querySettingId;
 
+  @api titleHelpText;
+  @api subtitle;
+
   /**
    * The JSON configuration for the lightning-datatable columns.
    * Example: [{"label":"First Name", "fieldName":"FirstName__c"}, {"label":"Last Name", "fieldName":"LastName__c"}]

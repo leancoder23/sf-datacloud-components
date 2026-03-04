@@ -1,43 +1,42 @@
 import submitDataCloudQuery from '@salesforce/apex/DataCloudQueryServiceController.submitDataCloudQuery';
 import getDataCloudQueryStatus from '@salesforce/apex/DataCloudQueryServiceController.getDataCloudQueryStatus';
 import getDataCloudQueryData from '@salesforce/apex/DataCloudQueryServiceController.getDataCloudQueryData';
-import getRecordData from '@salesforce/apex/DataCloudQueryServiceController.getRecordData';
 import getDataCloudRecordLocalSalesforceId from '@salesforce/apex/DataCloudQueryServiceController.getDataCloudRecordLocalId';
 
-
 const DEFAULT_PAGE_SIZE=20;
-
+const MAX_WAIT_FOR_FINISH_STATUS=90000 //in millisecond
+const WAIT_LOOP_DELAY=500 // in millisecond
+const MAX_LOOP_COUNT = MAX_WAIT_FOR_FINISH_STATUS/WAIT_LOOP_DELAY;
  async function executeDataCloudQuery(querySettingId,recordId,pageSize){
-
         try{
-
             // Step 1: Submit the query and get the job ID
             let queryResult = await submitDataCloudQuery({
                 querySettingId:querySettingId,
                 recordId:recordId
                 });
-            console.log('query Submit Result:', queryResult);
 
             const queryId = queryResult.queryId;
-            console.log(queryId)
 
-            if(!queryResult.isCompleted){
+            if(!queryResult.isCompleted || true){
               // Step 2: Poll for job status until it's completed
-                let status;
+               let loopCounter = 0;
                 do {
+                    loopCounter++;
+
                     await delay(500); // Wait for 500 milli seconds before polling again
                     queryResult = await getDataCloudQueryStatus({
                         querySettingId:querySettingId,
                         queryId:queryId});
-                    console.log('Current Status:', queryResult);
+
+                    console.info('DS loop counter',loopCounter,MAX_LOOP_COUNT);
+                    if(loopCounter>=MAX_LOOP_COUNT){
+                        throw new Error("Fetching query status is timeout, please click on refresh");
+                    }
+
                 } while (!queryResult.isCompleted);
             }
-
             const totalRowCount = queryResult.rowCount;
-            console.log(totalRowCount)
-
             //Query processing is completed - Get the result now
-
             queryResult = await getDataCloudQueryResultData(querySettingId,queryId,0,pageSize??DEFAULT_PAGE_SIZE);
 
              const records = queryResult.records;
@@ -45,8 +44,10 @@ const DEFAULT_PAGE_SIZE=20;
             return {queryId,totalRowCount,records};
 
         } catch (error) {
-            console.error('Error executing Data Cloud query:', error);
-            throw error;
+             console.error('Error executing Data Cloud query:', error);
+             throw error;
+
+
         }
     }
 
@@ -59,7 +60,7 @@ const DEFAULT_PAGE_SIZE=20;
                             rowStart:rowOffset,
                             rowCount: rowCount
                             });
-             console.log('Query Page Result:', queryResult);
+
             return queryResult;
         }catch(error){
              console.error('Error fetching data cloud query result Data:', error);

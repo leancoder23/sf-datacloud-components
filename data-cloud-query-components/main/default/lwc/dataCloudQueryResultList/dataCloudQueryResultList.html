@@ -1,12 +1,26 @@
 <template>
 
-    <lightning-card title={title} icon-name={iconName}>
+    <lightning-card icon-name={iconName}>
+        <div slot="title" class="slds-grid slds-grid_vertical-align-center">
+            {title}
+            <template if:true={titleHelpText}>
+                <lightning-helptext class="slds-var-m-left_xx-small" icon-name="utility:info_alt" content={titleHelpText} >
+                </lightning-helptext>
+            </template>
+        </div>
+
         <div slot="actions">
             <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data" onclick={refreshData}>
             </lightning-button-icon>
         </div>
 
         <div class="slds-m-around_medium">
+            <template if:true={subtitle}>
+                <div class="slds-text-body_small slds-hyphenate slds-var-m-bottom_small">
+                    {subtitle}
+                </div>
+            </template>
+
             <template if:true={isLoading}>
 
                 <lightning-spinner alternative-text="Loading..." variant="brand"></lightning-spinner>

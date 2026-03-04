@@ -77,6 +77,8 @@ public with sharing class DataCloudRestQueryService implements DataCloudQuerySer
         // <-- FIXED: Changed variable type from SsotQueryResponse to Map<String, Object>
         Map<String, Object> apiResponse = makeApiCallout('GET', path, null);
 
+        system.debug('DS apiresponse: ' +  apiResponse);
+
         // 3. Parse and return the standardized result
         return parseRestQueryResponse(apiResponse);
     }
@@ -108,7 +110,6 @@ public with sharing class DataCloudRestQueryService implements DataCloudQuerySer
 
         // 2. Make the callout (no body for GET)
         Map<String, Object> apiResponse = makeApiCallout('GET', path, null);
-        system.debug(apiResponse);
 
         //Since this endpoint does not returns the query id as a part of response
         //passing this manually to be included in QueryResult
@@ -147,6 +148,7 @@ public with sharing class DataCloudRestQueryService implements DataCloudQuerySer
         req.setMethod(httpMethod);
 
         req.setHeader('Accept', 'application/json');
+        req.setTimeout(60000); //set the time out 1 min, instead 10 second default
 
         if (httpMethod.equalsIgnoreCase('POST') && requestBody != null) {
             req.setHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -185,23 +187,30 @@ public with sharing class DataCloudRestQueryService implements DataCloudQuerySer
 
         DataCloudQueryServiceProvider.QueryResult result = new DataCloudQueryServiceProvider.QueryResult();
 
-        // The /rows endpoint might not return the 'status' block,
+        // The /rows endpoint will not return the 'status' block,
         // but the other endpoints will.
-        if (apiResponse.containsKey('status') && apiResponse.get('status') != null) {
-            Map<String, Object> status = (Map<String, Object>) apiResponse.get('status');
+        //response from create query endpoint
+        Map<String, Object> status;
+        if(apiResponse.containsKey('status')){
+            status = (Map<String, Object>) apiResponse.get('status');
+        }
 
+        //response from query status
+        if(apiResponse.containsKey('completionStatus')){
+            status=apiResponse;
+        }
+
+        if (status != null) {
             result.queryId = (String) status.get('queryId');
-
             // rowCount
             result.rowCount = (Long)status.get('rowCount');
 
-
-
             // Map completion status
             String statusStr = (String) status.get('completionStatus');
-            system.debug('DS VV1: ' + statusStr);
+
             if (statusStr != null) {
                 if (statusStr.equalsIgnoreCase('ResultsProduced') ||
+                        statusStr.equalsIgnoreCase('Finished') ||
                         statusStr.equalsIgnoreCase('Succeeded') ||
                         statusStr.equalsIgnoreCase('Failed')) {
                     result.isCompleted = true;

@@ -1,11 +1,11 @@
 <template>
-    <div class="table-cell slds-grid slds-grid_vertical-align-center" onclick={togglePopover}>
-        <template if:true={showPopoverButton}>
+    <div class="table-cell slds-grid slds-grid_vertical-align-center" onclick={togglePopover} title={value}>
+        <!--<template if:true={showPopoverButton}>
             <lightning-icon icon-name="utility:info_alt" size="x-small" alternative-text="Show Details"
                 title="Show Details" variant="success" class="popper-reference-element"></lightning-icon>
-        </template>
+        </template>-->
         &nbsp;
-        <lightning-formatted-text class="cell-text" value={value}></lightning-formatted-text>
+        <lightning-formatted-text class="cell-text popper-reference-element" value={value}></lightning-formatted-text>
         <!-- <span class="slds-truncate" title={value}>{value}</span>-->
     </div>
 
@@ -23,13 +23,13 @@
             </div>
 
             <div class="slds-popover__body slds-scrollable_y" style={popoverContentStyle}>
-                <lightning-layout multiple-rows="true">
+                <lightning-layout multiple-rows="true" vertical-align="stretch">
                     <template for:each={popoverItems} for:item="item">
-                        <lightning-layout-item key={item.label} size="6" padding="around-small">
+                        <lightning-layout-item flexibility="auto" key={item.label} size="6" padding="around-small">
 
-                            <div class="slds-form-element slds-form-element_stacked slds-form-element_readonly">
+                            <div class="slds-form-element slds-form-element_stacked slds-form-element_readonly slds-height_full slds-grid slds-grid_vertical">
                                 <span class="slds-form-element__label">{item.label}</span>
-                                <div class="slds-form-element__control">
+                                <div class="item-container slds-form-element__control slds-col">
                                     <template if:true={item.isRichText}>
                                         <lightning-formatted-rich-text
                                             value={item.value}></lightning-formatted-rich-text>

@@ -15,7 +15,16 @@
         <targetConfig targets="lightning__AppPage, lightning__HomePage,lightning__RecordPage">
             <property name="chartTitle"
                       type="String"
-                      label="Card Title" default="Data Cloud Query Chart"/>
+                      label="Chart Title" default="Data Cloud Query Chart"/>
+
+            <property name="chartHelpText"
+                      type="String"
+                      label="Title Help Text"/>
+
+            <property name="chartSubtitle"
+                      type="String"
+                      placeholder="Chart subtitle, will appear bellow the title "
+                      label="Chart Subtitle"/>
 
             <property name="width"
                       type="Integer"

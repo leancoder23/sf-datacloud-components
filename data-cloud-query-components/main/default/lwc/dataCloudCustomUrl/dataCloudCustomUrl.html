@@ -6,9 +6,6 @@
 <template>
     <template if:true={recordId}>
         <div class="link-container slds-grid">
-            <div class="link-icon slds-col slds-grow-none slds-shrink-none">
-                <lightning-icon icon-name="utility:new_window" size="x-small"></lightning-icon>
-            </div>
             <div class="slds-col slds-truncate">
                 <span onclick={handleClick}  class="link-text slds-text-link"> {label}</span>
             </div>

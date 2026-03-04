@@ -15,6 +15,15 @@
     <targetConfigs>
         <targetConfig targets="lightning__AppPage, lightning__HomePage,lightning__RecordPage">
             <property name="title" type="String" label="Card Title" default="Data Cloud Query Results"/>
+            <property name="titleHelpText"
+                      type="String"
+                      label="Title Help Text"/>
+
+            <property name="subtitle"
+                      type="String"
+                      placeholder="Subtitle, will appear bellow the title "
+                      label="Subtitle"/>
+
             <property name="iconName" type="String" label="Card Icon" default="standard:live_data"/>
             <property name="pageSize" type="Integer" label="Page Size" default="20" min="5" max="100"/>
             <property name="querySettingId"

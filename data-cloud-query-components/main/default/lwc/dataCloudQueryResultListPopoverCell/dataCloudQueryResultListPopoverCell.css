@@ -1,28 +1,30 @@
 /* Container for the two-column layout */
 
-.popper-element .slds-popover__header{
-    border-bottom:1px solid #ccc;
-    background-color:var(--slds-g-color-surface-2,#f2f2f2);
-    padding-bottom:10x;
-    padding-top:10px;
+.popper-element .slds-popover__header {
+    border-bottom: 1px solid #ccc;
+    background-color: var(--slds-g-color-surface-2, #f2f2f2);
+    padding-bottom: 10x;
+    padding-top: 10px;
 }
 
-.table-cell{
-    cursor:grab;
+.table-cell {
+    cursor: grab;
 }
 
-.cell-text{
+.item-container {
+    display: block;
+    width: 100%;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.cell-text {
     text-decoration-line: underline;
     text-decoration-style: dotted;
+    display: block;
+    width: 100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 /* Ensure formatting components fit within control */
-lightning-formatted-rich-text,
-lightning-formatted-text,
-lightning-formatted-number,
-lightning-formatted-date-time {
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}

@@ -1,10 +1,22 @@
 <template>
-    <lightning-card title={chartTitle} icon-name="utility:chart">
+    <lightning-card  icon-name="utility:chart">
+        <div slot="title" class="slds-grid slds-grid_vertical-align-center">
+            {chartTitle}
+            <template if:true={chartHelpText}>
+                <lightning-helptext class="slds-var-m-left_xx-small" icon-name="utility:info_alt" content={chartHelpText} >
+                </lightning-helptext>
+            </template>
+        </div>
         <div slot="actions">
             <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data" onclick={handleRefresh}>
             </lightning-button-icon>
         </div>
         <div class="slds-p-around_medium">
+            <template if:true={chartSubtitle}>
+                <div class="slds-text-body_small slds-hyphenate slds-var-m-bottom_small">
+                    {chartSubtitle}
+                </div>
+            </template>
             <template if:true={isLoading}>
                 <lightning-spinner alternative-text="Loading chart data..." size="medium"></lightning-spinner>
             </template>
