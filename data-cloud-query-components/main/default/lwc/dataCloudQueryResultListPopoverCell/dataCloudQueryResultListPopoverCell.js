@@ -56,6 +56,7 @@ export default class DataCloudQueryResultListPopoverCell extends LightningElemen
             "date",
             "datetime",
           ].includes(item.type),
+          cellSize: item.cellSpanFull ? 12 : 6,
           typeAttributes: item.typeAttributes || {},
         };
       });
@@ -154,7 +155,7 @@ export default class DataCloudQueryResultListPopoverCell extends LightningElemen
     }
 
     const referenceElement = this.template.querySelector(
-      ".popper-reference-element"
+      ".popper-reference-element",
     );
     const popperElement = this.template.querySelector(".popper-element");
 
@@ -194,7 +195,7 @@ export default class DataCloudQueryResultListPopoverCell extends LightningElemen
                 // Remove previous nubbin class (e.g., slds-nubbin_top) and add the correct one
                 popperElement.className = popperElement.className.replace(
                   /slds-nubbin_\w+-?\w*/g,
-                  ""
+                  "",
                 );
                 if (nubbinClass) {
                   popperElement.classList.add(nubbinClass);
@@ -203,7 +204,7 @@ export default class DataCloudQueryResultListPopoverCell extends LightningElemen
               requires: ["popperOffsets"],
             },
           ],
-        }
+        },
       );
     }
   }
