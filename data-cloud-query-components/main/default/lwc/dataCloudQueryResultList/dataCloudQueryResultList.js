@@ -1,18 +1,21 @@
-import { LightningElement, api, track } from "lwc";
+import { LightningElement, api, track,wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import { NavigationMixin } from "lightning/navigation";
+import { NavigationMixin,CurrentPageReference } from "lightning/navigation";
+import {
+  executeDataCloudQuery,
+  getDataCloudQueryResultData,
+  getDataCloudRecordLocalId,
+  formatString,
+  resolveRecordId
+} from "c/dataCloudQueryService";
+
+
 //CUSTOM LABELS
 import msgShowingRecordCount from "@salesforce/label/c.DCQR_Showing_Record_Count";
 import msgDataNotFound from "@salesforce/label/c.DCQR_Data_Not_Found";
 import lblLoadMore from "@salesforce/label/c.DCQR_Load_More";
 import msgGenericErrorMessage from "@salesforce/label/c.DCQR_Generic_Error_Message";
 
-import {
-  executeDataCloudQuery,
-  getDataCloudQueryResultData,
-  getDataCloudRecordLocalId,
-  formatString,
-} from "c/dataCloudQueryService";
 
 const MSG_SHOWING_RECORD_COUNT = "Showing {0} of records {1}.";
 const MSG_DATA_NOT_FOUND = "No Data found!";
@@ -61,6 +64,8 @@ export default class DataCloudQueryResultList extends NavigationMixin(
   rowsLoaded = 0;
   // This flag now determines if the 'View More' button should be shown
   hasMoreData = true;
+
+  @wire(CurrentPageReference) _pageRef;
 
   // -------------------------- LIFECYCLE HOOKS -----------------------------
 
@@ -152,9 +157,11 @@ export default class DataCloudQueryResultList extends NavigationMixin(
         );
       }
 
+      const effectiveRecordId = resolveRecordId(this.recordId, this._pageRef);
+
       const result = await executeDataCloudQuery(
         this.querySettingId,
-        this.recordId,
+        effectiveRecordId,
         this.pageSize
       );
 

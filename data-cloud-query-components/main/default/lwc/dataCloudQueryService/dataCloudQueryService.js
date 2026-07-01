@@ -104,10 +104,22 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Resolve the recordId from query parameter if component is not placed on record page in this case salesforce will not inject the recordId
+ * @param apiRecordId - recordId injected by salesforce
+ * @param pageReference - current page reference object
+ * @returns {*|null}
+ */
+function resolveRecordId(apiRecordId, pageReference) {
+  if (apiRecordId) return apiRecordId;
+  return pageReference?.state?.c__recordId || null;
+}
+
 export {
   executeDataCloudQuery,
   getDataCloudQueryResultData,
   getDataCloudRecordLocalId,
   formatString,
   delay,
+  resolveRecordId
 };

@@ -1,5 +1,7 @@
-import { LightningElement, api } from "lwc";
+import { LightningElement, api,wire } from "lwc";
 import { loadScript } from "lightning/platformResourceLoader";
+import {CurrentPageReference } from "lightning/navigation";
+
 import chartjs from "@salesforce/resourceUrl/DCQR_ChartJsLib";
 
 // Import custom labels
@@ -7,7 +9,7 @@ import msgGenericErrorMessage from "@salesforce/label/c.DCQR_Generic_Error_Messa
 import msgDataNotFound from "@salesforce/label/c.DCQR_Data_Not_Found";
 
 // Import service component methods
-import { executeDataCloudQuery } from "c/dataCloudQueryService";
+import { executeDataCloudQuery,resolveRecordId } from "c/dataCloudQueryService";
 
 import { chartFunctionRegistry, hydrateChartConfig } from "./chartUtility.js";
 
@@ -41,6 +43,8 @@ export default class DataCloudQueryResultChart extends LightningElement {
   _chartJsOptions;
   _finalChartConfig;
   _chartJsLoaded = false;
+
+  @wire(CurrentPageReference) _pageRef;
 
   // --- Lifecycle Hooks ---
 
@@ -293,9 +297,11 @@ export default class DataCloudQueryResultChart extends LightningElement {
 
   async fetchChartData() {
     try {
+      const effectiveRecordId = resolveRecordId(this.recordId, this._pageRef);
+
       const initialResult = await executeDataCloudQuery(
         this.querySettingId,
-        this.recordId,
+        effectiveRecordId,
         DATA_SET_MAX_SIZE,
       );
       const { totalRowCount, records } = initialResult;
