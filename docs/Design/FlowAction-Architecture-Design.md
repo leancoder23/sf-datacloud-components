@@ -53,7 +53,7 @@ Key design decisions:
 - **Single mode: one variable per mapping** — each mapping produces a separate typed flow input variable.
 - **Multi mode: one JSON payload** — all mapped fields from all selected records are projected into a JSON array string, sent to a single `targetFlowVariable`.
 - **`__ALL__` keyword** — shorthand to pass the entire record (single) or all selected records (multi) without enumerating fields.
-- **Shared service module** — config parsing, validation, and variable building live in a single `dataCloudQueryActionService` module, consumed by both components with zero logic duplication.
+- **Shared service module** — config parsing, validation, and variable building are added to the existing `dataCloudQueryService` module, consumed by both components with zero logic duplication.
 - **LightningModal-based flow execution** — flows run in a modal overlay, keeping the user on the same page with automatic data refresh on completion.
 
 ---
