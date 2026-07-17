@@ -38,6 +38,13 @@
                     description="JSON string defining the datatable columns."
                     placeholder='[{"label":"ID", "fieldName":"Id__c"},{"label":"First Name", "fieldName":"FirstName__c"}]'/>
 
+            <property
+                    name="actionConfig"
+                    type="String"
+                    label="Action Configuration (JSON)"
+                    description="JSON defining action buttons that invoke Salesforce Flows. Each action specifies a flow API name, selection mode (single/multi), and field-to-flow-variable mappings."
+                    placeholder='{"actions":[{"label":"Create Case","flowApiName":"My_Flow","selectionMode":"single","inputMappings":[{"flowVariable":"email","fieldName":"Email__c","type":"String"}]}]}'/>
+
 
 
         </targetConfig>

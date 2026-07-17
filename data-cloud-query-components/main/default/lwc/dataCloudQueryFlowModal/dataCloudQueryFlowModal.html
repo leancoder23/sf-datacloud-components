@@ -1,0 +1,13 @@
+<template>
+    <lightning-modal-header label={label}>
+    </lightning-modal-header>
+    <lightning-modal-body>
+        <div class="dcqr-action-flow-container slds-is-relative" >
+            <lightning-flow
+                flow-api-name={flowApiName}
+                flow-input-variables={flowInputVariables}
+                onstatuschange={handleFlowStatusChange}>
+            </lightning-flow>
+        </div>
+    </lightning-modal-body>
+</template>

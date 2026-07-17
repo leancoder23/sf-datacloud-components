@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <choices>
+        <name>choiceHigh</name>
+        <choiceText>High</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>High</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>choiceLow</name>
+        <choiceText>Low</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Low</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>choiceNormal</name>
+        <choiceText>Normal</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Normal</stringValue>
+        </value>
+    </choices>
+    <description>Test flow to validate Data Cloud Query List action integration. Accepts record data, displays it on screen, and creates a Task with the payload as key-value pairs in the description.</description>
+    <formulas>
+        <name>formulaDisplayText</name>
+        <dataType>String</dataType>
+        <expression>"&lt;p&gt;&lt;b&gt;Data received from Data Cloud Query List:&lt;/b&gt;&lt;/p&gt;" &amp;
+"&lt;table style=&apos;width:100%; border-collapse:collapse;&apos;&gt;" &amp;
+"&lt;tr style=&apos;border-bottom:1px solid #ddd;&apos;&gt;&lt;td style=&apos;padding:8px; font-weight:bold;&apos;&gt;Customer ID&lt;/td&gt;&lt;td style=&apos;padding:8px;&apos;&gt;" &amp; {!customerId} &amp; "&lt;/td&gt;&lt;/tr&gt;" &amp;
+"&lt;tr style=&apos;border-bottom:1px solid #ddd;&apos;&gt;&lt;td style=&apos;padding:8px; font-weight:bold;&apos;&gt;Customer Name&lt;/td&gt;&lt;td style=&apos;padding:8px;&apos;&gt;" &amp; {!customerName} &amp; "&lt;/td&gt;&lt;/tr&gt;" &amp;
+"&lt;tr style=&apos;border-bottom:1px solid #ddd;&apos;&gt;&lt;td style=&apos;padding:8px; font-weight:bold;&apos;&gt;Customer Email&lt;/td&gt;&lt;td style=&apos;padding:8px;&apos;&gt;" &amp; {!customerEmail} &amp; "&lt;/td&gt;&lt;/tr&gt;" &amp;
+IF(NOT(ISBLANK({!additionalData})),
+  "&lt;tr&gt;&lt;td style=&apos;padding:8px; font-weight:bold;&apos;&gt;Additional Data&lt;/td&gt;&lt;td style=&apos;padding:8px;&apos;&gt;" &amp; {!additionalData} &amp; "&lt;/td&gt;&lt;/tr&gt;",
+  ""
+) &amp;
+"&lt;/table&gt;"</expression>
+    </formulas>
+    <formulas>
+        <name>formulaTaskDescription</name>
+        <dataType>String</dataType>
+        <expression>"Task created from Data Cloud Query action." &amp; BR() &amp; BR() &amp;
+"--- Record Details ---" &amp; BR() &amp;
+"Customer ID: " &amp; {!customerId} &amp; BR() &amp;
+"Customer Name: " &amp; {!customerName} &amp; BR() &amp;
+"Customer Email: " &amp; {!customerEmail} &amp; BR() &amp;
+IF(NOT(ISBLANK({!additionalData})),
+  BR() &amp; "--- Additional Data ---" &amp; BR() &amp; {!additionalData},
+  ""
+)</expression>
+    </formulas>
+    <interviewLabel>DCQR Test Create Task From Data {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>DCQR_Test_Create_Task_From_Data</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordCreates>
+        <name>createTask</name>
+        <label>Create Task</label>
+        <locationX>176</locationX>
+        <locationY>350</locationY>
+        <connector>
+            <targetReference>screenSuccess</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>formulaTaskDescription</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <elementReference>inputTaskPriority</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>inputTaskSubject</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordCreates>
+    <runInMode>DefaultMode</runInMode>
+    <screens>
+        <name>screenShowData</name>
+        <label>Review Data Cloud Record</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>createTask</targetReference>
+        </connector>
+        <fields>
+            <name>displayRecordData</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>{!formulaDisplayText}</fieldText>
+        </fields>
+        <fields>
+            <name>inputTaskSubject</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Follow up: {!customerName}</stringValue>
+            </defaultValue>
+            <fieldText>Task Subject</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>inputTaskPriority</name>
+            <dataType>String</dataType>
+            <defaultValue>
+                <stringValue>Normal</stringValue>
+            </defaultValue>
+            <fieldText>Priority</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+            <choiceReferences>choiceHigh</choiceReferences>
+            <choiceReferences>choiceNormal</choiceReferences>
+            <choiceReferences>choiceLow</choiceReferences>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>screenSuccess</name>
+        <label>Task Created Successfully</label>
+        <locationX>176</locationX>
+        <locationY>518</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>displaySuccess</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;color: rgb(4, 132, 75);&quot;&gt;&lt;b&gt;Task created successfully!&lt;/b&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;A follow-up task has been created with the Data Cloud record details in the description.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Subject:&lt;/b&gt; {!inputTaskSubject}&lt;/p&gt;&lt;p&gt;&lt;b&gt;Priority:&lt;/b&gt; {!inputTaskPriority}&lt;/p&gt;</fieldText>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>176</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>screenShowData</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>additionalData</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>customerEmail</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>customerId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>customerName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

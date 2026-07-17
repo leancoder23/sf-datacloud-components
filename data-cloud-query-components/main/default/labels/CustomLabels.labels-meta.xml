@@ -32,4 +32,28 @@
         <shortDescription>MSG: Showing Record Count</shortDescription>
         <value>Showing {0} of records {1}.</value>
     </labels>
+    <labels>
+        <fullName>DCQR_Single_Row_Selection</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Warning message for required single selection for action</shortDescription>
+        <value>This action requires exactly one selected record.</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Multi_Row_Selection</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Warning message for  multiple row selection</shortDescription>
+        <value>Select one or more records before proceeding.</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Generic_Row_Selection_Info</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Generic info message for row selection needed for enabling action button</shortDescription>
+        <value>Select one or more records from the table to activate these buttons. Note that some actions require exactly one selected record, while others support multiple records.</value>
+    </labels>
 </CustomLabels>

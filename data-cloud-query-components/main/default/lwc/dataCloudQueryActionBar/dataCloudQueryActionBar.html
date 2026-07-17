@@ -1,0 +1,43 @@
+<template>
+    <lightning-button-group>
+        <template if:true={hasActions}>
+            <template for:each={visibleActions} for:item="action">
+                <lightning-button
+                    key={action.flowApiName}
+                    label={action.label}
+                    icon-name={action.icon}
+                    variant={action.variant}
+                    disabled={action.disabled}
+                    title={action.tooltip}
+                    data-flow-name={action.flowApiName}
+                    onclick={handleActionClick}>
+                </lightning-button>
+            </template>
+            <template if:true={hasOverflowActions}>
+                <lightning-button-menu
+                    alternative-text="More Actions"
+                    variant="border-filled"
+                    icon-name="utility:down"
+                    onselect={handleOverflowActionSelect}>
+                    <template for:each={overflowActions} for:item="action">
+                        <lightning-menu-item
+                            key={action.flowApiName}
+                            label={action.label}
+                            disabled={action.disabled}
+                            title={action.tooltip}
+                            value={action.flowApiName}
+                            icon-name={action.icon}>
+                        </lightning-menu-item>
+                    </template>
+                </lightning-button-menu>
+            </template>
+        </template>
+        <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data" onclick={handleRefreshClick}>
+        </lightning-button-icon>
+    </lightning-button-group>
+    <template if:true={hasActions}>
+        &nbsp;
+        <lightning-helptext icon-name="utility:info_alt"  content={actionbarInfo}></lightning-helptext>
+    </template>
+
+</template>

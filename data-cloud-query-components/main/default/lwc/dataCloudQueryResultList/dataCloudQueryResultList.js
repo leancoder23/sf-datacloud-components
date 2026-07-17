@@ -44,7 +44,12 @@ export default class DataCloudQueryResultList extends NavigationMixin(
    */
   @api columnConfig;
 
-  @api additionalConfig;
+  /**
+   * JSON configuration for action buttons that invoke Salesforce Flows.
+   * Passed through to the c-data-cloud-query-action-bar child component.
+   */
+  @api actionConfig;
+
 
   // ---------------------- LOCAL STATE PROPERTIES -----------------------
 
@@ -52,6 +57,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(
 
   @track data = [];
   @track columns = [];
+  @track selectedRows = [];
   isLoading = false;
 
   error;
@@ -62,7 +68,6 @@ export default class DataCloudQueryResultList extends NavigationMixin(
   queryId;
   totalRows = 0;
   rowsLoaded = 0;
-  // This flag now determines if the 'View More' button should be shown
   hasMoreData = true;
 
   @wire(CurrentPageReference) _pageRef;
@@ -79,11 +84,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(
 
   // --------------------------- GETTERS -------------------------------
 
-  /**
-   * Getter to determine if the "View More" button should be displayed.
-   */
   get showViewMoreButton() {
-    // Show button if not in an initial load state and there's more data to fetch.
     return !this.isLoading && this.hasMoreData;
   }
 
@@ -105,6 +106,10 @@ export default class DataCloudQueryResultList extends NavigationMixin(
       this.rowsLoaded,
       this.totalRows
     );
+  }
+
+  get hasNoActionConfig() {
+    return !this.actionConfig;
   }
 
   // --------------------------- DATA METHODS -------------------------------
@@ -165,7 +170,6 @@ export default class DataCloudQueryResultList extends NavigationMixin(
         this.pageSize
       );
 
-      // Assign a unique key for the datatable to use
       this.data = this.addKeyToData(result.records);
       this.queryId = result.queryId;
       this.totalRows = result.totalRowCount;
@@ -205,6 +209,12 @@ export default class DataCloudQueryResultList extends NavigationMixin(
     }
   }
 
+  // -------------------------- ROW SELECTION ------------------------------
+
+  handleRowSelection(event) {
+    this.selectedRows = event.detail.selectedRows;
+  }
+
   // -------------------------- HELPER METHODS ------------------------------
 
   parseColumnConfig() {
@@ -212,7 +222,6 @@ export default class DataCloudQueryResultList extends NavigationMixin(
       if (this.columnConfig) {
         const columns = JSON.parse(this.columnConfig);
 
-        //Consideration for popover cell. If column type is customPopoverCell, then attach typeAttribute for rowData
         columns.forEach((col) => {
           if (col.type == "customPopoverCell") {
             if (!col.typeAttributes) {
@@ -237,9 +246,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(
   addKeyToData(records, startIndex = 0) {
     return records.map((record, index) => ({
       ...record,
-      // Create a unique key for LWC's rendering engine
       _key: `row-${startIndex + index}`,
-      //self reference the entire row to be used by custom data types
       _row: record,
     }));
   }
@@ -257,6 +264,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(
 
   resetState() {
     this.data = [];
+    this.selectedRows = [];
     this.isLoading = false;
     this.error = null;
     this.totalRows = 0;
@@ -268,15 +276,5 @@ export default class DataCloudQueryResultList extends NavigationMixin(
     console.error("Data Cloud Query Result List Error:", error);
 
     this.error = error.body ? error.body.message : error.message;
-    // Optionally, show a toast notification
-    /*
-    this.dispatchEvent(
-      new ShowToastEvent({
-        title: "Query Error",
-        message: error.body ? error.body.message : error.message,
-        variant: "error",
-        mode: "sticky",
-      })
-    );*/
   }
 }

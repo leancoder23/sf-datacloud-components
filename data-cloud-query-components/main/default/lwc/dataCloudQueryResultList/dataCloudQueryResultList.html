@@ -10,8 +10,12 @@
         </div>
 
         <div slot="actions">
-            <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data" onclick={refreshData}>
-            </lightning-button-icon>
+            <c-data-cloud-query-action-bar
+                action-config={actionConfig}
+                selected-records={selectedRows}
+                record-id={recordId}
+                onrefresh={refreshData}>
+            </c-data-cloud-query-action-bar>
         </div>
 
         <div class="slds-m-around_medium">
@@ -35,13 +39,14 @@
                     </lightning-accordion>
                 </div>
             </template>
-            {additionalConfig}
 
             <template if:false={error}>
                 <template if:true={data.length}>
                     <lightning-datatable render-mode="default" key-field="_key" data={data} columns={columns}
-                        onnavigatetodatacloudrecord={handleDataCloudRecordClick} hide-checkbox-column>
-                        <!-- <c-data-cloud-custom-url-provider slot="customdatatypes"></c-data-cloud-custom-url-provider>-->
+                        onnavigatetodatacloudrecord={handleDataCloudRecordClick}
+                        show-row-number-column
+                        hide-checkbox-column={hasNoActionConfig}
+                        onrowselection={handleRowSelection}>
                         <c-data-cloud-query-result-list-custom-data-types-provider
                             slot="customdatatypes"></c-data-cloud-query-result-list-custom-data-types-provider>
                     </lightning-datatable>
