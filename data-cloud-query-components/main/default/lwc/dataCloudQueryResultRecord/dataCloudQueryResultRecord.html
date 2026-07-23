@@ -1,0 +1,93 @@
+<template>
+    <lightning-card icon-name={effectiveIconName} class="slds-is-relative">
+        <!-- Header -->
+        <template lwc:if={showHeader}>
+            <div slot="title" class="slds-grid slds-grid_vertical-align-center">
+                {title}
+                <template lwc:if={titleHelpText}>
+                    <lightning-helptext class="slds-var-m-left_xx-small" icon-name="utility:info_alt"
+                        content={titleHelpText}>
+                    </lightning-helptext>
+                </template>
+            </div>
+
+            <template lwc:if={subtitle}>
+                <div class="slds-m-around_medium">
+                    <div class="slds-text-body_small slds-hyphenate">
+                        {subtitle}
+                    </div>
+                </div>
+            </template>
+        </template>
+
+        <!-- Loading -->
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="Loading..." variant="brand">
+            </lightning-spinner>
+        </template>
+
+        <!-- Error -->
+        <template lwc:elseif={error}>
+            <div class="slds-theme_error slds-var-m-around_medium" role="alert">
+                <lightning-accordion allow-multiple-sections-open>
+                    <lightning-accordion-section class="error-detail-section" label={genericErrorMessage}>
+                        {error}
+                    </lightning-accordion-section>
+                </lightning-accordion>
+            </div>
+        </template>
+
+        <!-- Records -->
+        <template lwc:elseif={hasData}>
+            <template for:each={formattedData} for:item="record">
+                <div key={record.id}>
+                    <template for:each={record.sections} for:item="section">
+                        <div key={section.key} class="slds-var-p-horizontal_small">
+                            <!-- Accordion Section -->
+                            <template lwc:if={section.isAccordion}>
+                                <lightning-accordion allow-multiple-sections-open
+                                    active-section-name={section.activeSectionName}>
+                                    <lightning-accordion-section name={section.sectionName}
+                                        label={section.label} icon-name={section.icon}>
+                                        <lightning-layout multiple-rows="true"
+                                            class="slds-gutters slds-var-p-horizontal_large layout-container">
+                                            <template for:each={section.fields} for:item="field">
+                                                <lightning-layout-item key={field.key} size={field.fieldSize}
+                                                    class="layout-item-cell slds-p-horizontal_small slds-p-vertical_x-small">
+                                                    <c-data-cloud-query-result-field field={field}>
+                                                    </c-data-cloud-query-result-field>
+                                                </lightning-layout-item>
+                                            </template>
+                                        </lightning-layout>
+                                    </lightning-accordion-section>
+                                </lightning-accordion>
+                            </template>
+
+                            <!-- Plain Section -->
+                            <template lwc:else>
+                                <lightning-layout multiple-rows="true"
+                                    class="slds-gutters slds-var-p-horizontal_large layout-container">
+                                    <template for:each={section.fields} for:item="field">
+                                        <lightning-layout-item key={field.key} size={field.fieldSize}
+                                            class="layout-item-cell slds-p-horizontal_small slds-p-vertical_x-small">
+                                            <c-data-cloud-query-result-field field={field}>
+                                            </c-data-cloud-query-result-field>
+                                        </lightning-layout-item>
+                                    </template>
+                                </lightning-layout>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </template>
+
+        <!-- No Data -->
+        <template lwc:else>
+            <div class="slds-illustration slds-illustration_small slds-p-around_medium">
+                <lightning-illustration illustration-name="noresults:filter" title= {noDataMessage}>
+                </lightning-illustration>
+            </div>
+        </template>
+    </lightning-card>
+</template>

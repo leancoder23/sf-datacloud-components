@@ -1,0 +1,110 @@
+<template>
+    <div class="slds-form-element slds-form-element_readonly">
+
+        <!-- Field Label -->
+        <label class="slds-form-element__label">
+            {displayLabel}
+            <template lwc:if={hasFieldHelpText}>
+                <lightning-helptext
+                    class="slds-var-m-left_xx-small"
+                    content={fieldHelpText}>
+                </lightning-helptext>
+            </template>
+        </label>
+
+        <!-- Field Value -->
+        <div class="slds-form-element__control">
+            <!-- Date -->
+            <template lwc:if={isDate}>
+                <lightning-formatted-date-time
+                    value={formattedValue}
+                    year={typeAttributes.year}
+                    month={typeAttributes.month}
+                    day={typeAttributes.day}
+                    time-zone={typeAttributes.timeZone}>
+                </lightning-formatted-date-time>
+            </template>
+            <!-- DateTime -->
+            <template lwc:elseif={isDateTime}>
+                <lightning-formatted-date-time
+                    value={formattedValue}
+                    year={typeAttributes.year}
+                    month={typeAttributes.month}
+                    day={typeAttributes.day}
+                    hour={typeAttributes.hour}
+                    minute={typeAttributes.minute}
+                    second={typeAttributes.second}
+                    hour12={typeAttributes.hour12}
+                    weekday={typeAttributes.weekday}
+                    time-zone={typeAttributes.timeZone}>
+                </lightning-formatted-date-time>
+            </template>
+
+            <!-- Text -->
+            <template lwc:elseif={isText}>
+                <lightning-formatted-text
+                    value={formattedValue}>
+                </lightning-formatted-text>
+            </template>
+
+            <!-- Currency -->
+            <template lwc:elseif={isCurrency}>
+                <lightning-formatted-number
+                    value={formattedValue}
+                    format-style="currency"
+                    currency-code={typeAttributes.currencyCode}
+                    currency-display-as={typeAttributes.currencyDisplayAs}
+                    minimum-fraction-digits={typeAttributes.minimumFractionDigits}>
+                </lightning-formatted-number>
+            </template>
+
+            <!-- Number -->
+            <template lwc:elseif={isNumber}>
+                <lightning-formatted-number
+                    value={formattedValue}
+                    minimum-fraction-digits={typeAttributes.minimumFractionDigits}>
+                </lightning-formatted-number>
+            </template>
+
+            <!-- Email -->
+            <template lwc:elseif={isEmail}>
+                <lightning-formatted-email
+                    value={formattedValue}>
+                </lightning-formatted-email>
+            </template>
+
+            <!-- URL -->
+            <template lwc:elseif={isUrl}>
+                <lightning-formatted-url
+                    value={formattedValue}
+                    label={urlLabel}
+                    target={typeAttributes.target}>
+                </lightning-formatted-url>
+            </template>
+
+            <!-- Rich Text -->
+            <template lwc:elseif={isRichText}>
+                <lightning-formatted-rich-text
+                    value={formattedValue}>
+                </lightning-formatted-rich-text>
+            </template>
+
+            <!-- Boolean -->
+            <template lwc:elseif={isBoolean}>
+                <lightning-input
+                    type="checkbox"
+                    checked={isCheckboxChecked}
+                    disabled
+                    variant="label-hidden">
+                </lightning-input>
+            </template>
+
+            <!-- Default -->
+            <template lwc:else>
+                <lightning-formatted-text
+                    value={formattedValue}>
+                </lightning-formatted-text>
+            </template>
+        </div>
+    </div>
+</template>

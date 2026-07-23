@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Data Cloud Query Result — Record Detail View</masterLabel>
+    <description>Data Cloud Query Record</description>
+
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__UrlAddressable</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage, lightning__HomePage, lightning__RecordPage">
+            <property name="title"
+                      type="String"
+                      label="Title"/>
+
+            <property name="subtitle"
+                      type="String"
+                      label="Subtitle"/>
+
+            <property name="titleHelpText"
+                      type="String"
+                      label="Title Help Text"/>
+
+            <property name="iconName"
+                      type="String"
+                      label="Icon"
+                      description="Optional SLDS icon name. Only rendered when title is provided."/>
+
+            <property name="hideHeader"
+                      type="Boolean"
+                      label="Hide Header"
+                      description="When checked, hides the card header (title, icon, subtitle, help text)"
+                      default="false"/>
+
+            <property name="querySettingId"
+                      type="String"
+                      label="Query Setting Identifier"
+                      description="DataCloudQuerySetting__mdt developer name"/>
+
+            <property name="recordConfig"
+                      type="String"
+                      label="Record Layout Configuration (JSON)"
+                      description="JSON defining sections, fields, data types, and layout"
+                      placeholder='[{"label":"Business Segment", "fieldName":"Business_Segment__c"},{"label":"GCK", "fieldName":"GCK"}]'/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

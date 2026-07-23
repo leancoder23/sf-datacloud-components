@@ -1,6 +1,6 @@
-import { LightningElement, api,wire } from "lwc";
+import { LightningElement, api, wire } from "lwc";
 import { loadScript } from "lightning/platformResourceLoader";
-import {CurrentPageReference } from "lightning/navigation";
+import { CurrentPageReference } from "lightning/navigation";
 
 import chartjs from "@salesforce/resourceUrl/DCQR_ChartJsLib";
 
@@ -9,17 +9,12 @@ import msgGenericErrorMessage from "@salesforce/label/c.DCQR_Generic_Error_Messa
 import msgDataNotFound from "@salesforce/label/c.DCQR_Data_Not_Found";
 
 // Import service component methods
-import { executeDataCloudQuery,resolveRecordId } from "c/dataCloudQueryService";
+import { executeDataCloudQuery, PageRefTracker } from "c/dataCloudQueryService";
 
 import { chartFunctionRegistry, hydrateChartConfig } from "./chartUtility.js";
 
 
 const DATA_SET_MAX_SIZE = 800;
-
-// Fallback messages for labels
-const MSG_DATA_NOT_FOUND = "No Data found!";
-const ERR_GENERIC_MESSAGE =
-  "Oops! Something went wrong. Please contact administrator";
 
 export default class DataCloudQueryResultChart extends LightningElement {
   // --- Public Properties (from App Builder) ---
@@ -44,9 +39,15 @@ export default class DataCloudQueryResultChart extends LightningElement {
   _finalChartConfig;
   _chartJsLoaded = false;
 
-  @wire(CurrentPageReference) _pageRef;
+  _pageTracker = new PageRefTracker();
 
   // --- Lifecycle Hooks ---
+
+  @wire(CurrentPageReference)
+  wiredPageRef(pageRef) {
+    this._pageRef = pageRef;
+    this._pageTracker.update(pageRef, this.recordId, () => this.handleRefresh());
+  }
 
   connectedCallback() {
     this.setupTestQuery(); //TODO: remove this before production deployment
@@ -297,7 +298,8 @@ export default class DataCloudQueryResultChart extends LightningElement {
 
   async fetchChartData() {
     try {
-      const effectiveRecordId = resolveRecordId(this.recordId, this._pageRef);
+      await this._pageTracker.ready;
+      const effectiveRecordId = this._pageTracker.resolve(this.recordId, this._pageRef);
 
       const initialResult = await executeDataCloudQuery(
         this.querySettingId,
@@ -403,10 +405,10 @@ export default class DataCloudQueryResultChart extends LightningElement {
 
   // --- Getters ---
   get noDataMessage() {
-    return msgDataNotFound || MSG_DATA_NOT_FOUND;
+    return msgDataNotFound;
   }
   get genericErrorMessage() {
-    return msgGenericErrorMessage || ERR_GENERIC_MESSAGE;
+    return msgGenericErrorMessage;
   }
   get showNoDataMessage() {
     return !this.isLoading && !this._finalChartConfig;

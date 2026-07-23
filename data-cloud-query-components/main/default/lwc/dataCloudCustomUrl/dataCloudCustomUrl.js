@@ -5,8 +5,9 @@
 import { LightningElement,api } from 'lwc';
 
 export default class DataCloudCustomUrl extends LightningElement {
-@api label;
+    @api label;
     @api recordId;
+    @api pageApiName;
     @api objectName;
 
      handleClick() {
@@ -14,7 +15,8 @@ export default class DataCloudCustomUrl extends LightningElement {
             const event = new CustomEvent('navigatetodatacloudrecord', {
                 detail: {
                     recordId: this.recordId,
-                    objectName: this.objectName
+                    objectName: this.objectName,
+                    pageApiName:this.pageApiName
                 },
                 bubbles: true,
                 composed: true

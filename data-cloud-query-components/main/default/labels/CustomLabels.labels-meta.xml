@@ -17,20 +17,44 @@
         <value>Oops! Something went wrong. Please contact administrator</value>
     </labels>
     <labels>
-        <fullName>DCQR_Load_More</fullName>
-        <categories>Data Cloud Query Result</categories>
-        <language>en_US</language>
-        <protected>false</protected>
-        <shortDescription>Label:Load More</shortDescription>
-        <value>Load More</value>
-    </labels>
-    <labels>
         <fullName>DCQR_Showing_Record_Count</fullName>
         <categories>Data Cloud Query Result</categories>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>MSG: Showing Record Count</shortDescription>
-        <value>Showing {0} of records {1}.</value>
+        <value>Showing {0}-{1} of {2} records</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Search_Placeholder</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Search this list</shortDescription>
+        <value>Search this list...</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Showing_Page_Numbers</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Label: Showing page numbers</shortDescription>
+        <value>Page {0}</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Showing_Current_Page_Label</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Label: Showing current page label</shortDescription>
+        <value>Page {0} of {1}</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Total_Rows</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG : Showing Total Rows</shortDescription>
+        <value>Total rows: {0}</value>
     </labels>
     <labels>
         <fullName>DCQR_Single_Row_Selection</fullName>
@@ -47,6 +71,22 @@
         <protected>false</protected>
         <shortDescription>MSG: Warning message for  multiple row selection</shortDescription>
         <value>Select one or more records before proceeding.</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Search_Fields_Info</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Search fields info help text</shortDescription>
+        <value>Searching across: {0}</value>
+    </labels>
+    <labels>
+        <fullName>DCQR_Search_Sort_Disabled</fullName>
+        <categories>Data Cloud Query Result</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>MSG: Search and sort disabled for large datasets</shortDescription>
+        <value>Note: Search and sorting are disabled for datasets exceeding {0} records. Please contact your administrator to help narrow down these results.</value>
     </labels>
     <labels>
         <fullName>DCQR_Generic_Row_Selection_Info</fullName>

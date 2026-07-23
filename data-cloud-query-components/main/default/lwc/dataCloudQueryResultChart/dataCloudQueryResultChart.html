@@ -1,5 +1,5 @@
 <template>
-    <lightning-card  icon-name="utility:chart">
+    <lightning-card  icon-name="standard:chart">
         <div slot="title" class="slds-grid slds-grid_vertical-align-center">
             {chartTitle}
             <template if:true={chartHelpText}>
@@ -18,7 +18,7 @@
                 </div>
             </template>
             <template if:true={isLoading}>
-                <lightning-spinner alternative-text="Loading chart data..." size="medium"></lightning-spinner>
+                <lightning-spinner alternative-text="Loading chart data..." size="medium" variant="brand"></lightning-spinner>
             </template>
             <template if:true={error}>
                 <div class="slds-theme_error" role="alert">

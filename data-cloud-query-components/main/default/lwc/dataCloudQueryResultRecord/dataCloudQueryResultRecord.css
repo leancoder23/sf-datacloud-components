@@ -1,0 +1,8 @@
+:host {
+    --slds-c-card-body-spacing-block-start: 0px;
+    --slds-c-card-body-spacing-block-end: 0px;
+}
+
+.layout-item-cell {
+    padding-bottom: 0.5rem;
+}

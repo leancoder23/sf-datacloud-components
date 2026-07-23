@@ -8,10 +8,10 @@ export default class DataCloudQueryResultListCustomDataTypesProvider extends Lig
   @api
   getDataTypes() {
     return {
-      customDataCloudUrl: {
+      customRecordLink: {
         template: customUrl,
         standardCellLayout: true,
-        typeAttributes: ["label", "objectName"],
+        typeAttributes: ["label", "objectName","pageApiName"],
       },
       customPopoverCell: {
         template: popoverCell,
@@ -22,19 +22,4 @@ export default class DataCloudQueryResultListCustomDataTypesProvider extends Lig
     };
   }
 
-  /*
-  handleClick(event) {
-    let { record, object } = event.currentTarget.dataset;
-    const clickEvent = new CustomEvent("datacloudrecordclick", {
-      composed: true,
-      bubbles: true,
-      cancelable: true,
-      detail: {
-        recordId: record,
-        objectApi: object,
-      },
-    });
-    console.log("click from provider", clickEvent.detail);
-    this.dispatchEvent(clickEvent);
-  }*/
 }

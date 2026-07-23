@@ -1,35 +1,25 @@
 <template>
+    <lightning-card icon-name={iconName} class="slds-is-relative">
 
-    <lightning-card icon-name={iconName}>
         <div slot="title" class="slds-grid slds-grid_vertical-align-center">
             {title}
             <template if:true={titleHelpText}>
-                <lightning-helptext class="slds-var-m-left_xx-small" icon-name="utility:info_alt" content={titleHelpText} >
+                <lightning-helptext class="slds-var-m-left_xx-small" icon-name="utility:info_alt"
+                    content={titleHelpText}>
                 </lightning-helptext>
             </template>
         </div>
 
         <div slot="actions">
-            <c-data-cloud-query-action-bar
-                action-config={actionConfig}
-                selected-records={selectedRows}
-                record-id={recordId}
-                onrefresh={refreshData}>
+            <c-data-cloud-query-action-bar action-config={actionConfig} selected-records={selectedRows}
+                record-id={recordId} onrefresh={refreshData}>
             </c-data-cloud-query-action-bar>
         </div>
 
-        <div class="slds-m-around_medium">
+        <div class="slds-var-m-around_small">
             <template if:true={subtitle}>
-                <div class="slds-text-body_small slds-hyphenate slds-var-m-bottom_small">
-                    {subtitle}
-                </div>
+                <p class="slds-text-body_small slds-var-m-bottom_small">{subtitle}</p>
             </template>
-
-            <template if:true={isLoading}>
-
-                <lightning-spinner alternative-text="Loading..." variant="brand"></lightning-spinner>
-            </template>
-
             <template if:true={error}>
                 <div class="slds-theme_error" role="alert">
                     <lightning-accordion allow-multiple-sections-open="true">
@@ -40,32 +30,104 @@
                 </div>
             </template>
 
-            <template if:false={error}>
-                <template if:true={data.length}>
-                    <lightning-datatable render-mode="default" key-field="_key" data={data} columns={columns}
-                        onnavigatetodatacloudrecord={handleDataCloudRecordClick}
-                        show-row-number-column
-                        hide-checkbox-column={hasNoActionConfig}
-                        onrowselection={handleRowSelection}>
-                        <c-data-cloud-query-result-list-custom-data-types-provider
-                            slot="customdatatypes"></c-data-cloud-query-result-list-custom-data-types-provider>
-                    </lightning-datatable>
+                <div class="container">
+                    <template if:true={isLoading}>
+                        <lightning-spinner alternative-text="Loading..." variant="brand" size="medium">
+                        </lightning-spinner>
+                    </template>
+                    <!-- Header: Search (right-aligned) with help text -->
+                    <template if:true={showSearch}>
+                        <div class="slds-grid slds-grid_align-end slds-grid_vertical-align-center slds-m-bottom_xx-small">
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-grid slds-grid_vertical-align-center">
+                                <lightning-input
+                                    class="slds-grow"
+                                    type="search"
+                                    label="Search this list"
+                                    variant="label-hidden"
+                                    placeholder={searchPlaceholderText}
+                                    value={searchTerm}
+                                    disabled={isSearchDisabled}
+                                    onchange={handleSearchInput}>
+                                </lightning-input>
+                                <lightning-helptext
+                                    class="slds-var-m-left_xx-small"
+                                    icon-name="utility:info_alt"
+                                    content={searchHelpText}>
+                                </lightning-helptext>
+                            </div>
+                        </div>
+                    </template>
+                    <!-- Data Table -->
+                    <template if:true={hasActualData}>
+                        <div class="data-table-wrapper">
+                            <lightning-datatable
+                                    key-field="_key"
+                                    data={data}
+                                    columns={columns}
+                                    onnavigatetodatacloudrecord={handleRecordNavigation}
+                                    hide-checkbox-column={hasNoActionConfig}
+                                    onrowselection={handleRowSelection}
+                                    default-sort-direction="asc"
+                                    hide-borders="true"
+                                    sorted-direction={sortDirection}
+                                    sorted-by={sortedBy}
+                                    onsort={handleSort}>
+                                <c-data-cloud-query-result-list-custom-data-types-provider
+                                        slot="customdatatypes">
+                                </c-data-cloud-query-result-list-custom-data-types-provider>
+                            </lightning-datatable>
+                        </div>
 
-                    <div class="slds-align_absolute-center">
-                        <template if:true={data.length}>
-                            {showRecordCount}
-                        </template>
-                        <template if:true={showViewMoreButton}>
-                            &nbsp;<lightning-button label={loadMoreButtonLabel} variant="base" onclick={handleViewMore}>
-                            </lightning-button>
-                        </template>
-                    </div>
+                        <!-- Footer: Record info (left) + Pagination (right) -->
+                        <div class="slds-grid slds-grid_vertical-align-center slds-var-p-around_xx-small data-table-footer-wrapper">
+                            <div class="slds-col">
+                                <span class="slds-text-body_small">{footerRecordInfo}</span>
+                            </div>
+                            <template if:true={showPagination}>
+                                <div class="slds-col slds-no-flex">
+                                    <lightning-button-group>
+                                        <lightning-button-icon
+                                            icon-name="utility:chevronleft"
+                                            alternative-text="Previous Page"
+                                            title="Previous Page"
+                                            onclick={handlePreviousPage}
+                                            disabled={disablePrevious}>
+                                        </lightning-button-icon>
+                                        <lightning-button-menu
+                                            alternative-text="Jump to page"
+                                            label={pageDropdownLabel}
+                                            onselect={handlePageJump}
+                                            menu-alignment="right">
+                                            <template for:each={pageOptions} for:item="opt">
+                                                <lightning-menu-item
+                                                    key={opt.value}
+                                                    label={opt.label}
+                                                    value={opt.value}
+                                                    checked={opt.checked}>
+                                                </lightning-menu-item>
+                                            </template>
+                                        </lightning-button-menu>
+                                        <lightning-button-icon
+                                            icon-name="utility:chevronright"
+                                            alternative-text="Next Page"
+                                            title="Next Page"
+                                            onclick={handleNextPage}
+                                            disabled={disableNext}>
+                                        </lightning-button-icon>
+                                    </lightning-button-group>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
 
-                </template>
-                <template if:false={data.length}>
-                    <p class="slds-text-align_center">{noDataMessage}</p>
-                </template>
-            </template>
+                    <!-- Empty State -->
+                    <template if:true={hasNoData}>
+                            <div class="slds-align_absolute-center slds-var-p-around_large">
+                                <p class="slds-text-body_regular slds-text-color_weak">{noDataMessage}</p>
+                            </div>
+                    </template>
+                </div>
+
         </div>
     </lightning-card>
 </template>

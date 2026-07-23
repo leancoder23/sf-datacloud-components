@@ -14,37 +14,42 @@
 
     <targetConfigs>
         <targetConfig targets="lightning__AppPage, lightning__HomePage,lightning__RecordPage">
-            <property name="title" type="String" label="Card Title" default="Data Cloud Query Results"/>
+            <property name="title" type="String" label="Card Title"
+                default="Data Cloud Query Results" />
             <property name="titleHelpText"
-                      type="String"
-                      label="Title Help Text"/>
+                type="String"
+                label="Title Help Text" />
 
             <property name="subtitle"
-                      type="String"
-                      placeholder="Subtitle, will appear bellow the title "
-                      label="Subtitle"/>
+                type="String"
+                placeholder="Subtitle, will appear bellow the title "
+                label="Subtitle" />
 
-            <property name="iconName" type="String" label="Card Icon" default="standard:live_data"/>
-            <property name="pageSize" type="Integer" label="Page Size" default="20" min="5" max="100"/>
+            <property name="iconName" type="String" label="Card Icon" default="standard:live_data" />
+            <property name="pageSize" type="Integer" label="Page Size" default="20" min="5"
+                max="100" />
+            <property name="maxClientProcessingRows" type="Integer"
+                label="Max record count for client side sorting and filtering"
+                description="Maximum number of records for which client-side search and sort are enabled. When the dataset exceeds this threshold both features are disabled."
+                default="5000" min="1000" max="10000" />
             <property name="querySettingId"
-                      type="String"
-                      label="Query Setting Identifier"
-                      description="Custom metadata DataCloudQuerySetting__mdt developer name, this is used to fetch the corresponding sql query "/>
+                type="String"
+                label="Query Setting Identifier"
+                description="Custom metadata DataCloudQuerySetting__mdt developer name, this is used to fetch the corresponding sql query " />
 
             <property
-                    name="columnConfig"
-                    type="String"
-                    label="Column Configuration (JSON)"
-                    description="JSON string defining the datatable columns."
-                    placeholder='[{"label":"ID", "fieldName":"Id__c"},{"label":"First Name", "fieldName":"FirstName__c"}]'/>
+                name="columnConfig"
+                type="String"
+                label="Column Configuration (JSON)"
+                description="JSON string defining the datatable columns."
+                placeholder='[{"label":"ID", "fieldName":"Id__c"},{"label":"First Name", "fieldName":"FirstName__c"}]' />
 
             <property
-                    name="actionConfig"
-                    type="String"
-                    label="Action Configuration (JSON)"
-                    description="JSON defining action buttons that invoke Salesforce Flows. Each action specifies a flow API name, selection mode (single/multi), and field-to-flow-variable mappings."
-                    placeholder='{"actions":[{"label":"Create Case","flowApiName":"My_Flow","selectionMode":"single","inputMappings":[{"flowVariable":"email","fieldName":"Email__c","type":"String"}]}]}'/>
-
+                name="actionConfig"
+                type="String"
+                label="Action Configuration (JSON)"
+                description="JSON defining action buttons that invoke Salesforce Flows. Each action specifies a flow API name, selection mode (single/multi), and field-to-flow-variable mappings."
+                placeholder='{"actions":[{"label":"Create Case","flowApiName":"My_Flow","selectionMode":"single","inputMappings":[{"flowVariable":"email","fieldName":"Email__c","type":"String"}]}]}' />
 
 
         </targetConfig>

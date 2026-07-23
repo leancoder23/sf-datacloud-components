@@ -1,7 +1,7 @@
 import submitDataCloudQuery from "@salesforce/apex/DataCloudQueryServiceController.submitDataCloudQuery";
 import getDataCloudQueryStatus from "@salesforce/apex/DataCloudQueryServiceController.getDataCloudQueryStatus";
 import getDataCloudQueryData from "@salesforce/apex/DataCloudQueryServiceController.getDataCloudQueryData";
-import getDataCloudRecordLocalSalesforceId from "@salesforce/apex/DataCloudQueryServiceController.getDataCloudRecordLocalId";
+import resolveRecordNavigationApex from "@salesforce/apex/DataCloudQueryServiceController.resolveRecordNavigation";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_WAIT_FOR_FINISH_STATUS = 90000; //in millisecond
@@ -17,19 +17,17 @@ async function executeDataCloudQuery(querySettingId, recordId, pageSize) {
 
     const queryId = queryResult.queryId;
 
-    if (!queryResult.isCompleted || true) {
-      // Step 2: Poll for job status until it's completed
+    if (!queryResult.isCompleted) {
       let loopCounter = 0;
       do {
         loopCounter++;
 
-        await delay(500); // Wait for 500 milli seconds before polling again
+        await delay(WAIT_LOOP_DELAY);
         queryResult = await getDataCloudQueryStatus({
           querySettingId: querySettingId,
           queryId: queryId,
         });
 
-        console.info("DS loop counter", loopCounter, MAX_LOOP_COUNT);
         if (loopCounter >= MAX_LOOP_COUNT) {
           throw new Error(
             "Fetching query status is timeout, please click on refresh",
@@ -76,9 +74,8 @@ async function getDataCloudQueryResultData(
   }
 }
 
-async function getDataCloudRecordLocalId(recordId, objectName) {
-  console.log("getting local id", recordId, objectName);
-  return await getDataCloudRecordLocalSalesforceId({ recordId, objectName });
+async function resolveRecordNavigation(recordId, data360ObjectName) {
+  return await resolveRecordNavigationApex({ recordId, data360ObjectName });
 }
 
 function formatString(formatString, ...values) {
@@ -115,11 +112,38 @@ function resolveRecordId(apiRecordId, pageReference) {
   return pageReference?.state?.c__recordId || null;
 }
 
+class PageRefTracker {
+  _resolve;
+  _lastLoadedRecordId;
+  ready;
+
+  constructor() {
+    this.ready = new Promise(resolve => { this._resolve = resolve; });
+  }
+
+  update(pageRef, apiRecordId, onRecordChange) {
+    if (pageRef) {
+      this._resolve(pageRef);
+      const currentId = resolveRecordId(apiRecordId, pageRef);
+      if (this._lastLoadedRecordId && currentId !== this._lastLoadedRecordId) {
+        onRecordChange();
+      }
+    }
+  }
+
+  resolve(apiRecordId, pageRef) {
+    const id = resolveRecordId(apiRecordId, pageRef);
+    this._lastLoadedRecordId = id;
+    return id;
+  }
+}
+
 export {
   executeDataCloudQuery,
   getDataCloudQueryResultData,
-  getDataCloudRecordLocalId,
+  resolveRecordNavigation,
   formatString,
   delay,
-  resolveRecordId
+  resolveRecordId,
+  PageRefTracker
 };

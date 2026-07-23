@@ -203,24 +203,76 @@ public with sharing class DataCloudQueryServiceController {
 
     }
 
+    public static final String NAV_LOCAL_RECORD   = 'LOCAL_RECORD';
+    public static final String NAV_DATA360_RECORD = 'DATA360_RECORD';
+    public static final String NAV_CUSTOM_PAGE    = 'CUSTOM_PAGE';
+
     /**
-     * Get the local salesforce record Id for the data cloud record by executing SOQL query,
-     * this Id will be used by the list component to navigate to the salesforce record page for the data cloud object
-     * @param recordId - Data cloud object (DMO) record id
-     * @param objectName - Data cloud object name
+     * Resolves the navigation strategy for a given record identifier.
      *
-     * @return - Salesforce local record id "Id" - this "Id" is temporary
+     * Tier 1 – LOCAL_RECORD:   recordId is a valid Salesforce Id and the current user can access it.
+     * Tier 2 – DATA360_RECORD: data360ObjectName is provided, the object exists in the schema
+     *                          (org is connected to home/companion org), and a matching record
+     *                          is found via ssot__Id__c.
+     * Tier 3 – CUSTOM_PAGE:    Fallback when neither of the above succeeds.
+     *
+     * @param recordId          The record identifier — may be a Salesforce Id or a Data Cloud id
+     * @param data360ObjectName (Optional) The Data360 object API name to attempt a ssot__Id__c lookup
+     *
+     * @return RecordNavigationInfo indicating which navigation path the LWC should follow
      */
     @AuraEnabled(Cacheable=true)
-    public static String getDataCloudRecordLocalId(String recordId, String objectName){
-        List<SObject> records = soqlQueryAdapter.querySoqlWithBinds(String.format('SELECT Id FROM {0} WHERE ssot__Id__c=:recordId',
-                new List<String>{
-                        objectName
-                })
-        ,new Map<String,Object>{
-                        'recordId'=>recordId
-                },AccessLevel.SYSTEM_MODE);
+    public static RecordNavigationInfo resolveRecordNavigation(String recordId, String data360ObjectName) {
 
-        return records.size()>0?(String)(records.get(0).get('Id')):null;
+        RecordNavigationInfo navInfo = new RecordNavigationInfo();
+
+        // ── Tier 1: Local Record — is recordId a valid SF Id accessible by this user? ──
+        try {
+            Id sfId = Id.valueOf(recordId);
+            String sObjName = sfId.getSObjectType().getDescribe().getName();
+
+            List<SObject> records = soqlQueryAdapter.querySoqlWithBinds(
+                    String.format('SELECT Id FROM {0} WHERE Id=:recordId', new List<String>{ sObjName }),
+                    new Map<String, Object>{ 'recordId' => recordId },
+                    AccessLevel.USER_MODE
+            );
+
+            if (!records.isEmpty()) {
+                navInfo.navigationType  = NAV_LOCAL_RECORD;
+                navInfo.resolvedRecordId = recordId;
+                navInfo.objectApiName   = sObjName;
+                return navInfo;
+            }
+        } catch (System.StringException e) {
+            // Not a valid Salesforce Id — expected for Data Cloud / DMO ids, continue to Tier 2
+        }
+
+        // ── Tier 2: Data360 Record — org connected and record found via ssot__Id__c? ──
+        if (String.isNotBlank(data360ObjectName)
+                && Schema.getGlobalDescribe().containsKey(data360ObjectName)) {
+
+            List<SObject> records = soqlQueryAdapter.querySoqlWithBinds(
+                    String.format('SELECT Id FROM {0} WHERE ssot__Id__c=:recordId', new List<String>{ data360ObjectName }),
+                    new Map<String, Object>{ 'recordId' => recordId },
+                    AccessLevel.SYSTEM_MODE
+            );
+
+            if (!records.isEmpty()) {
+                navInfo.navigationType   = NAV_DATA360_RECORD;
+                navInfo.resolvedRecordId = (String) records.get(0).get('Id');
+                navInfo.objectApiName    = data360ObjectName;
+                return navInfo;
+            }
+        }
+
+        // ── Tier 3: Fallback — no local or Data360 match ──
+        navInfo.navigationType = NAV_CUSTOM_PAGE;
+        return navInfo;
+    }
+
+    public class RecordNavigationInfo {
+        @AuraEnabled public String navigationType;
+        @AuraEnabled public String resolvedRecordId;
+        @AuraEnabled public String objectApiName;
     }
 }
