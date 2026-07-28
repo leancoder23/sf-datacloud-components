@@ -31,6 +31,7 @@ import {
 } from "./dataUtils";
 
 const SEARCH_DEBOUNCE_MS = 300;
+const RECORD_CONTEXT_ERROR_PREFIX = '[RECORD_CONTEXT_ERROR]';
 
 export default class DataCloudQueryResultList extends NavigationMixin(LightningElement) {
   //--------------------------------------------------------------------------
@@ -70,6 +71,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(LightningE
   selectedRows = [];
   isLoading = false;
   error;
+  configInfo;
 
   // Pagination state
   queryId;
@@ -105,6 +107,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(LightningE
   }
 
   connectedCallback() {
+    this.parseActionConfig();
     this.loadInitialData();
   }
 
@@ -166,11 +169,30 @@ export default class DataCloudQueryResultList extends NavigationMixin(LightningE
   // =======================================================================
 
   get hasNoActionConfig() {
-    return !this.actionConfig;
+    return !this.parsedActionConfig;
+  }
+
+  parseActionConfig() {
+    if (!this.actionConfig) {
+      this.parsedActionConfig = null;
+      return;
+    }
+    try {
+      this.parsedActionConfig = typeof this.actionConfig === 'string'
+        ? JSON.parse(this.actionConfig)
+        : this.actionConfig;
+    } catch (e) {
+      console.error('Invalid action config JSON:', e);
+      this.parsedActionConfig = null;
+    }
+  }
+
+  get hasConfigInfo() {
+    return Boolean(this.configInfo);
   }
 
   get hasNoData() {
-    return !this.isLoading && !this.error && !this.hasActualData;
+    return !this.isLoading && !this.error && !this.configInfo && !this.hasActualData;
   }
 
   get hasActualData() {
@@ -338,6 +360,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(LightningE
   async loadInitialData() {
     try {
       this.isLoading = true;
+      this.configInfo = null;
 
       if (!this.querySettingId) {
         throw new Error(
@@ -544,6 +567,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(LightningE
     this.processedData = [];
     this.isLoading = false;
     this.error = null;
+    this.configInfo = null;
     this.serverTotalRows = 0;
     this.currentPage = 1;
     this.sortedBy = null;
@@ -553,6 +577,11 @@ export default class DataCloudQueryResultList extends NavigationMixin(LightningE
 
   handleError(error) {
     console.error("Data Cloud Query Result List Error:", error);
-    this.error = error.body ? error.body.message : error.message;
+    const message = error?.body?.message || error?.message || this.genericErrorMessage;
+    if (message.startsWith(RECORD_CONTEXT_ERROR_PREFIX)) {
+      this.configInfo = message.substring(RECORD_CONTEXT_ERROR_PREFIX.length).trim();
+      return;
+    }
+    this.error = message;
   }
 }

@@ -11,7 +11,7 @@
         </div>
 
         <div slot="actions">
-            <c-data-cloud-query-action-bar action-config={actionConfig} selected-records={selectedRows}
+            <c-data-cloud-query-action-bar action-config={parsedActionConfig} selected-records={selectedRows}
                 record-id={recordId} onrefresh={refreshData}>
             </c-data-cloud-query-action-bar>
         </div>
@@ -30,6 +30,14 @@
                 </div>
             </template>
 
+            <template if:true={hasConfigInfo}>
+                <div class="slds-grid slds-grid_align-center slds-grid_vertical-align-center slds-var-p-around_medium">
+                    <lightning-icon icon-name="utility:info_alt"  size="medium" class="slds-var-m-right_x-small"></lightning-icon>
+                    <span class="slds-text-body_regular slds-text-color_weak">{configInfo}</span>
+                </div>
+            </template>
+
+            <template if:false={hasConfigInfo}>
                 <div class="container">
                     <template if:true={isLoading}>
                         <lightning-spinner alternative-text="Loading..." variant="brand" size="medium">
@@ -127,6 +135,7 @@
                             </div>
                     </template>
                 </div>
+            </template>
 
         </div>
     </lightning-card>

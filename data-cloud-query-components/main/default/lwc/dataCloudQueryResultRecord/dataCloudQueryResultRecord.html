@@ -1,5 +1,5 @@
 <template>
-    <lightning-card icon-name={effectiveIconName} class="slds-is-relative">
+    <lightning-card icon-name={effectiveIconName} class="slds-is-relative" variant="narrow">
         <!-- Header -->
         <template lwc:if={showHeader}>
             <div slot="title" class="slds-grid slds-grid_vertical-align-center">
@@ -20,6 +20,14 @@
             </template>
         </template>
 
+        <template lwc:if={_showRefresh}>
+            <div slot="actions">
+                <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data"
+                    onclick={refreshData}>
+                </lightning-button-icon>
+            </div>
+        </template>
+
         <!-- Loading -->
         <template lwc:if={isLoading}>
             <lightning-spinner alternative-text="Loading..." variant="brand">
@@ -37,12 +45,30 @@
             </div>
         </template>
 
+        <!-- Config Info (e.g. no record context) -->
+        <template lwc:elseif={hasConfigInfo}>
+            <div class="slds-grid slds-grid_align-center slds-grid_vertical-align-center slds-var-p-around_medium">
+                <lightning-icon icon-name="utility:info_alt"  size="medium" class="slds-var-m-right_x-small"></lightning-icon>
+                <span class="slds-text-body_regular slds-text-color_weak">{configInfo}</span>
+            </div>
+        </template>
+
         <!-- Records -->
         <template lwc:elseif={hasData}>
             <template for:each={formattedData} for:item="record">
                 <div key={record.id}>
+                    <template lwc:if={record.hasActionBar}>
+                        <div class="slds-grid slds-grid_align-end slds-var-p-around_xxx-small">
+                            <c-data-cloud-query-action-bar
+                                action-config={record.recordActionConfig}
+                                selected-records={record.selectedArray}
+                                record-id={recordId}
+                                onrefresh={refreshData}>
+                            </c-data-cloud-query-action-bar>
+                        </div>
+                    </template>
                     <template for:each={record.sections} for:item="section">
-                        <div key={section.key} class="slds-var-p-horizontal_small">
+                        <div key={section.key} class="slds-var-p-horizontal_xx-small">
                             <!-- Accordion Section -->
                             <template lwc:if={section.isAccordion}>
                                 <lightning-accordion allow-multiple-sections-open
@@ -50,10 +76,10 @@
                                     <lightning-accordion-section name={section.sectionName}
                                         label={section.label} icon-name={section.icon}>
                                         <lightning-layout multiple-rows="true"
-                                            class="slds-gutters slds-var-p-horizontal_large layout-container">
+                                            class="slds-gutters slds-var-p-horizontal_x-small layout-container">
                                             <template for:each={section.fields} for:item="field">
                                                 <lightning-layout-item key={field.key} size={field.fieldSize}
-                                                    class="layout-item-cell slds-p-horizontal_small slds-p-vertical_x-small">
+                                                    class="layout-item-cell slds-p-horizontal_small slds-p-vertical_xx-small">
                                                     <c-data-cloud-query-result-field field={field}>
                                                     </c-data-cloud-query-result-field>
                                                 </lightning-layout-item>
@@ -66,10 +92,10 @@
                             <!-- Plain Section -->
                             <template lwc:else>
                                 <lightning-layout multiple-rows="true"
-                                    class="slds-gutters slds-var-p-horizontal_large layout-container">
+                                    class="slds-gutters slds-var-p-horizontal_x-small layout-container">
                                     <template for:each={section.fields} for:item="field">
                                         <lightning-layout-item key={field.key} size={field.fieldSize}
-                                            class="layout-item-cell slds-p-horizontal_small slds-p-vertical_x-small">
+                                            class="layout-item-cell slds-p-horizontal_small slds-p-vertical_xx-small">
                                             <c-data-cloud-query-result-field field={field}>
                                             </c-data-cloud-query-result-field>
                                         </lightning-layout-item>
@@ -84,9 +110,8 @@
 
         <!-- No Data -->
         <template lwc:else>
-            <div class="slds-illustration slds-illustration_small slds-p-around_medium">
-                <lightning-illustration illustration-name="noresults:filter" title= {noDataMessage}>
-                </lightning-illustration>
+            <div class="slds-align_absolute-center slds-var-p-around_large">
+                <p class="slds-text-body_regular slds-text-color_weak">{noDataMessage}</p>
             </div>
         </template>
     </lightning-card>

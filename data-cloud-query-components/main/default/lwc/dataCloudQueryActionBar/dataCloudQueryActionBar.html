@@ -32,10 +32,12 @@
                 </lightning-button-menu>
             </template>
         </template>
-        <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data" onclick={handleRefreshClick}>
-        </lightning-button-icon>
+        <template if:true={isRefreshVisible}>
+            <lightning-button-icon icon-name="utility:refresh" alternative-text="Refresh Data" onclick={handleRefreshClick}>
+            </lightning-button-icon>
+        </template>
     </lightning-button-group>
-    <template if:true={hasActions}>
+    <template if:true={showSelectionInfo}>
         &nbsp;
         <lightning-helptext icon-name="utility:info_alt"  content={actionbarInfo}></lightning-helptext>
     </template>

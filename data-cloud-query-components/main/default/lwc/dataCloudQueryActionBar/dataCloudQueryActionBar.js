@@ -10,12 +10,6 @@ import actionbarInfoMessage from "@salesforce/label/c.DCQR_Generic_Row_Selection
 const DEFAULT_VISIBLE_BUTTON_COUNT = 3;
 const DEFAULT_MODAL_SIZE='medium';
 
-const MSG_SINGLE_ROW_SELECTION="This action requires exactly one selected record.";
-const MSG_MULTI_ROW_SELECTION="Select one or more records before proceeding.";
-const ERR_GENERIC_MESSAGE = "Oops! Something went wrong. Please contact administrator";
-const MSG_ACTION_BAR_INFO=`Select one or more records from the table to activate these buttons. 
-Note: that some actions require exactly one selected record, while others support multiple records`;
-
 export default class DataCloudQueryActionBar extends LightningElement {
   @api selectedRecords = [];
   @api actionConfig;
@@ -24,7 +18,7 @@ export default class DataCloudQueryActionBar extends LightningElement {
 
   @track _actions = [];
   @track _visibleButtonCount = DEFAULT_VISIBLE_BUTTON_COUNT;
-  @track isRefreshVisible=true;
+  @track isRefreshVisible = true;
 
   connectedCallback() {
     this.parseActions();
@@ -33,23 +27,23 @@ export default class DataCloudQueryActionBar extends LightningElement {
   // --------------------------- GETTERS -------------------------------
 
   get actionbarInfo(){
-    return actionbarInfoMessage||MSG_ACTION_BAR_INFO;
+    return actionbarInfoMessage;
   }
   get genericErrorMessage(){
-    return msgGenericErrorMessage||ERR_GENERIC_MESSAGE;
+    return msgGenericErrorMessage;
   }
 
   get singleSelectionMessage(){
-    return singleRowSelectionMessage||MSG_SINGLE_ROW_SELECTION;
+    return singleRowSelectionMessage;
   }
 
   get multiRowSelectionMessage(){
-    return multiRowSelectionMessage||MSG_MULTI_ROW_SELECTION;
+    return multiRowSelectionMessage;
   }
 
-  //Dynamically inject disabled and tooltip state into actions
   get processedActions() {
     if (!this.hasActions) return [];
+
     const selectedCount = this.selectedRecords ? this.selectedRecords.length : 0;
 
     return this._actions.map((action) => {
@@ -98,6 +92,10 @@ export default class DataCloudQueryActionBar extends LightningElement {
     return this.overflowActions.length > 0;
   }
 
+  get showSelectionInfo() {
+    return this.hasActions && !this.actionConfig?.hideSelectionInfo;
+  }
+
   // --------------------------- CONFIG PARSING ----------------------------
 
   parseActions() {
@@ -105,21 +103,19 @@ export default class DataCloudQueryActionBar extends LightningElement {
       this._actions = [];
       return;
     }
-    try {
-      const config =
-        typeof this.actionConfig === "string"
-          ? JSON.parse(this.actionConfig)
-          : this.actionConfig;
-      this._actions = config.actions || [];
-      if (config.visibleButtonCount !== undefined) {
-        this._visibleButtonCount =
-          parseInt(config.visibleButtonCount, 10) || DEFAULT_VISIBLE_BUTTON_COUNT;
-      }
 
-    } catch (e) {
-      console.error("Invalid action config JSON:", e);
-      this._actions = [];
+    const config = this.actionConfig;
+
+    this._actions = config.actions || [];
+
+    if (config.visibleButtonCount !== undefined) {
+      this._visibleButtonCount =
+        parseInt(config.visibleButtonCount, 10) || DEFAULT_VISIBLE_BUTTON_COUNT;
     }
+
+    this.isRefreshVisible = config.showRefresh !== undefined
+      ? Boolean(config.showRefresh)
+      : true;
   }
 
   // --------------------------- ACTION HANDLERS ---------------------------

@@ -9,6 +9,7 @@ import msgDataNotFound from '@salesforce/label/c.DCQR_Data_Not_Found';
 import msgGenericErrorMessage from '@salesforce/label/c.DCQR_Generic_Error_Message';
 
 const MAX_RECORDS = 100;
+const RECORD_CONTEXT_ERROR_PREFIX = '[RECORD_CONTEXT_ERROR]';
 
 const TYPE_RENDERERS = {
     date: 'date',
@@ -42,11 +43,17 @@ export default class DataCloudQueryResultRecord extends LightningElement {
     @api hideHeader = false;
     @api querySettingId;
     @api recordConfig;
+    @api actionConfig;
     @api recordId;
 
     formattedData = [];
     isLoading = false;
     error;
+    configInfo;
+
+    parsedActionConfig = null;
+    _sections = [];
+    _showRefresh = false;
 
     _pageTracker = new PageRefTracker();
 
@@ -57,6 +64,7 @@ export default class DataCloudQueryResultRecord extends LightningElement {
     }
 
     connectedCallback() {
+        this.parseActionConfig();
         this.loadInitialData();
     }
 
@@ -72,6 +80,10 @@ export default class DataCloudQueryResultRecord extends LightningElement {
 
     get hasData() {
         return this.formattedData.length > 0;
+    }
+
+    get hasConfigInfo() {
+        return Boolean(this.configInfo);
     }
 
     get showHeader() {
@@ -94,6 +106,7 @@ export default class DataCloudQueryResultRecord extends LightningElement {
     async loadInitialData() {
         this.isLoading = true;
         this.error = null;
+        this.configInfo = null;
 
         try {
             if (!this.querySettingId) {
@@ -111,6 +124,7 @@ export default class DataCloudQueryResultRecord extends LightningElement {
                 MAX_RECORDS
             );
 
+            this.parseRecordConfig();
             this.formattedData = this.buildLayout(
                 result?.records || []
             );
@@ -121,17 +135,81 @@ export default class DataCloudQueryResultRecord extends LightningElement {
         }
     }
 
-    // --- Layout Builder ---
+    // --- Config Parsing ---
+
+    parseRecordConfig() {
+        try {
+            if (!this.recordConfig) {
+                this._sections = [];
+                return;
+            }
+
+            const config = typeof this.recordConfig === 'string'
+                ? JSON.parse(this.recordConfig)
+                : this.recordConfig;
+
+            this._showRefresh = Boolean(config.showRefresh);
+
+            this._sections = (config?.sections ?? []).map(section => {
+                const columns = Number(section.columns) || 1;
+                return {
+                    ...section,
+                    columns,
+                    colSize: Math.floor(12 / columns),
+                    isAccordion: Boolean(section.label),
+                    isCollapsed: normalizeBoolean(section.defaultCollapsed)
+                };
+            });
+        } catch (e) {
+            this._sections = [];
+            this.handleError(e);
+        }
+    }
+
+    parseActionConfig() {
+        if (!this.actionConfig) {
+            this.parsedActionConfig = null;
+            return;
+        }
+        try {
+            const config = typeof this.actionConfig === 'string'
+                ? JSON.parse(this.actionConfig)
+                : this.actionConfig;
+
+            const actions = (config.actions || []).filter(
+                a => (a.selectionMode || 'multiple') !== 'multiple'
+            );
+
+            if (!actions.length) {
+                this.parsedActionConfig = null;
+                return;
+            }
+
+            this.parsedActionConfig = {
+                ...config,
+                actions,
+                showRefresh: false,
+                hideSelectionInfo: true
+            };
+        } catch (e) {
+            this.parsedActionConfig = null;
+            this.handleError(e);
+        }
+    }
 
     buildLayout(records) {
-        const sections = this.parseConfig();
-        if (!records.length || !sections.length) return [];
+        if (!records.length || !this._sections.length) return [];
+
+        const hasActionBar = Boolean(this.parsedActionConfig);
 
         return records.map((record, i) => {
-            const id = record.Id || record.ssot__Id__c || `record-${i}`;
+            const id = `record-${i}`;
             return {
                 id,
-                sections: sections.map((section, si) => {
+                selectedArray: [record],
+                recordActionConfig: this.parsedActionConfig,
+                hasActionBar,
+                sections: this._sections.map((section, si) => {
                     const sectionName = `${id}-s${si}`;
                     return {
                         key: `${id}-section-${si}`,
@@ -147,30 +225,6 @@ export default class DataCloudQueryResultRecord extends LightningElement {
                 })
             };
         });
-    }
-
-    parseConfig() {
-        try {
-            if (!this.recordConfig) return [];
-
-            const config = typeof this.recordConfig === 'string'
-                ? JSON.parse(this.recordConfig)
-                : this.recordConfig;
-
-            return (config?.sections ?? []).map(section => {
-                const columns = Number(section.columns) || 1;
-                return {
-                    ...section,
-                    columns,
-                    colSize: Math.floor(12 / columns),
-                    isAccordion: Boolean(section.label),
-                    isCollapsed: normalizeBoolean(section.defaultCollapsed)
-                };
-            });
-        } catch (e) {
-            this.handleError(e);
-            return [];
-        }
     }
 
     buildField(field, record, sectionName, colSize) {
@@ -195,9 +249,14 @@ export default class DataCloudQueryResultRecord extends LightningElement {
 
     handleError(error) {
         console.error(error);
-        this.error =
+        const message =
             error?.body?.message ||
             error?.message ||
             this.genericErrorMessage;
+        if (message.startsWith(RECORD_CONTEXT_ERROR_PREFIX)) {
+            this.configInfo = message.substring(RECORD_CONTEXT_ERROR_PREFIX.length).trim();
+            return;
+        }
+        this.error = message;
     }
 }

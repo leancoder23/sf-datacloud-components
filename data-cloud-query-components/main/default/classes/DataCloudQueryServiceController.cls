@@ -105,7 +105,7 @@ public with sharing class DataCloudQueryServiceController {
         }
 
         if(String.isNotBlank(querySetting.RecordBasedFilterConfig__c) &&  String.isBlank(recordId)) {
-            throw new DataCloudQueryServiceProvider.DataCloudQueryServiceException('Query requires current record id which is empty, please execute this query from record page only');
+            throw new DataCloudQueryServiceProvider.DataCloudQueryServiceException('[RECORD_CONTEXT_ERROR] Query requires current record id which is empty, please execute this query from a record page or provide the record id as a page parameter');
 
         }
 

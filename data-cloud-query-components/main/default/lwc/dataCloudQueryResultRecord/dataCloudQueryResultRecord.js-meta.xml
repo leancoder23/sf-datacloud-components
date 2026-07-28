@@ -46,6 +46,12 @@
                       label="Record Layout Configuration (JSON)"
                       description="JSON defining sections, fields, data types, and layout"
                       placeholder='[{"label":"Business Segment", "fieldName":"Business_Segment__c"},{"label":"GCK", "fieldName":"GCK"}]'/>
+
+            <property name="actionConfig"
+                      type="String"
+                      label="Action Configuration (JSON)"
+                      description="JSON defining action buttons that invoke Salesforce Flows for each record. Actions are automatically scoped to single-record mode."
+                      placeholder='{"actions":[{"label":"Create Case","flowApiName":"My_Flow","selectionMode":"single","inputMappings":[{"flowVariable":"email","fieldName":"Email__c","type":"String"}]}]}'/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

@@ -15,6 +15,7 @@ import { chartFunctionRegistry, hydrateChartConfig } from "./chartUtility.js";
 
 
 const DATA_SET_MAX_SIZE = 800;
+const RECORD_CONTEXT_ERROR_PREFIX = '[RECORD_CONTEXT_ERROR]';
 
 export default class DataCloudQueryResultChart extends LightningElement {
   // --- Public Properties (from App Builder) ---
@@ -32,6 +33,7 @@ export default class DataCloudQueryResultChart extends LightningElement {
   // --- Private State ---
   isLoading;
   error;
+  configInfo;
   chart;
 
   _chartData;
@@ -50,7 +52,7 @@ export default class DataCloudQueryResultChart extends LightningElement {
   }
 
   connectedCallback() {
-    this.setupTestQuery(); //TODO: remove this before production deployment
+   // this.setupTestQuery(); //TODO: remove this before production deployment
     this.loadChartScriptAndChartData();
   }
 
@@ -209,6 +211,7 @@ export default class DataCloudQueryResultChart extends LightningElement {
       return;
     }
     this.error = null;
+    this.configInfo = null;
     this.clearChartState();
 
     // Step 1: Validate and parse config template
@@ -396,7 +399,14 @@ export default class DataCloudQueryResultChart extends LightningElement {
   }
 
   handleError(error, contextMessage = null) {
-    const errorMessage = error.body ? error.body.message : error.message;
+    const errorMessage = error?.body?.message || error?.message;
+    if (errorMessage?.includes(RECORD_CONTEXT_ERROR_PREFIX)) {
+      const idx = errorMessage.indexOf(RECORD_CONTEXT_ERROR_PREFIX);
+      this.configInfo = errorMessage.substring(idx + RECORD_CONTEXT_ERROR_PREFIX.length).trim();
+      this.clearChartState();
+      this.isLoading = false;
+      return;
+    }
     console.error(contextMessage || "An error occurred:", errorMessage, error);
     this.error = (contextMessage ? `${contextMessage}: ` : "") + errorMessage;
     this.clearChartState();
@@ -404,6 +414,9 @@ export default class DataCloudQueryResultChart extends LightningElement {
   }
 
   // --- Getters ---
+  get hasConfigInfo() {
+    return Boolean(this.configInfo);
+  }
   get noDataMessage() {
     return msgDataNotFound;
   }
