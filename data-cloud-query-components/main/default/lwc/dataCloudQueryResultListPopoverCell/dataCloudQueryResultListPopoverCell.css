@@ -16,6 +16,8 @@
     width: 100%;
     white-space: pre-wrap;
     word-wrap: break-word;
+    max-height:100px;
+    overflow:auto;
 }
 
 .cell-text {

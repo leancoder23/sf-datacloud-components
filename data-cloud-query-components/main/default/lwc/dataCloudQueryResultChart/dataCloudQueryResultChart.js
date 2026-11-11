@@ -1,5 +1,7 @@
-import { LightningElement, api } from "lwc";
+import { LightningElement, api, wire } from "lwc";
 import { loadScript } from "lightning/platformResourceLoader";
+import { CurrentPageReference } from "lightning/navigation";
+
 import chartjs from "@salesforce/resourceUrl/DCQR_ChartJsLib";
 
 // Import custom labels
@@ -7,17 +9,13 @@ import msgGenericErrorMessage from "@salesforce/label/c.DCQR_Generic_Error_Messa
 import msgDataNotFound from "@salesforce/label/c.DCQR_Data_Not_Found";
 
 // Import service component methods
-import { executeDataCloudQuery } from "c/dataCloudQueryService";
+import { executeDataCloudQuery, PageRefTracker } from "c/dataCloudQueryService";
 
 import { chartFunctionRegistry, hydrateChartConfig } from "./chartUtility.js";
 
 
 const DATA_SET_MAX_SIZE = 800;
-
-// Fallback messages for labels
-const MSG_DATA_NOT_FOUND = "No Data found!";
-const ERR_GENERIC_MESSAGE =
-  "Oops! Something went wrong. Please contact administrator";
+const RECORD_CONTEXT_ERROR_PREFIX = '[RECORD_CONTEXT_ERROR]';
 
 export default class DataCloudQueryResultChart extends LightningElement {
   // --- Public Properties (from App Builder) ---
@@ -35,6 +33,7 @@ export default class DataCloudQueryResultChart extends LightningElement {
   // --- Private State ---
   isLoading;
   error;
+  configInfo;
   chart;
 
   _chartData;
@@ -42,10 +41,18 @@ export default class DataCloudQueryResultChart extends LightningElement {
   _finalChartConfig;
   _chartJsLoaded = false;
 
+  _pageTracker = new PageRefTracker();
+
   // --- Lifecycle Hooks ---
 
+  @wire(CurrentPageReference)
+  wiredPageRef(pageRef) {
+    this._pageRef = pageRef;
+    this._pageTracker.update(pageRef, this.recordId, () => this.handleRefresh());
+  }
+
   connectedCallback() {
-    this.setupTestQuery(); //TODO: remove this before production deployment
+   // this.setupTestQuery(); //TODO: remove this before production deployment
     this.loadChartScriptAndChartData();
   }
 
@@ -204,6 +211,7 @@ export default class DataCloudQueryResultChart extends LightningElement {
       return;
     }
     this.error = null;
+    this.configInfo = null;
     this.clearChartState();
 
     // Step 1: Validate and parse config template
@@ -293,9 +301,12 @@ export default class DataCloudQueryResultChart extends LightningElement {
 
   async fetchChartData() {
     try {
+      await this._pageTracker.ready;
+      const effectiveRecordId = this._pageTracker.resolve(this.recordId, this._pageRef);
+
       const initialResult = await executeDataCloudQuery(
         this.querySettingId,
-        this.recordId,
+        effectiveRecordId,
         DATA_SET_MAX_SIZE,
       );
       const { totalRowCount, records } = initialResult;
@@ -388,7 +399,14 @@ export default class DataCloudQueryResultChart extends LightningElement {
   }
 
   handleError(error, contextMessage = null) {
-    const errorMessage = error.body ? error.body.message : error.message;
+    const errorMessage = error?.body?.message || error?.message;
+    if (errorMessage?.includes(RECORD_CONTEXT_ERROR_PREFIX)) {
+      const idx = errorMessage.indexOf(RECORD_CONTEXT_ERROR_PREFIX);
+      this.configInfo = errorMessage.substring(idx + RECORD_CONTEXT_ERROR_PREFIX.length).trim();
+      this.clearChartState();
+      this.isLoading = false;
+      return;
+    }
     console.error(contextMessage || "An error occurred:", errorMessage, error);
     this.error = (contextMessage ? `${contextMessage}: ` : "") + errorMessage;
     this.clearChartState();
@@ -396,11 +414,14 @@ export default class DataCloudQueryResultChart extends LightningElement {
   }
 
   // --- Getters ---
+  get hasConfigInfo() {
+    return Boolean(this.configInfo);
+  }
   get noDataMessage() {
-    return msgDataNotFound || MSG_DATA_NOT_FOUND;
+    return msgDataNotFound;
   }
   get genericErrorMessage() {
-    return msgGenericErrorMessage || ERR_GENERIC_MESSAGE;
+    return msgGenericErrorMessage;
   }
   get showNoDataMessage() {
     return !this.isLoading && !this._finalChartConfig;

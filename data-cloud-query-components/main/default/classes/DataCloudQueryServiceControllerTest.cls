@@ -221,45 +221,82 @@ private class DataCloudQueryServiceControllerTest {
     }
 
     @isTest
-    static void givenValidDmoId_whenGetDataCloudRecordLocalId_thenReturnsLocalId() {
+    static void givenAccessibleSalesforceId_whenResolveRecordNavigation_thenReturnsLocalRecord() {
         // Given
         initializeControllerAdapterWithMockAdapter();
-        //Initialize Controller Adapter must be called before
         SoqlQueryAdapterMock queryAdapterMock = (SoqlQueryAdapterMock)DataCloudQueryServiceController.soqlQueryAdapter;
 
         Id fakeAccountId = '001000000000000AAA';
         queryAdapterMock.mockRecords = new List<SObject>{ new Account(Id = fakeAccountId) };
 
-        // When
+        // When — valid SF Id that the user can access (Tier 1 hit)
         Test.startTest();
-        String localId = DataCloudQueryServiceController.getDataCloudRecordLocalId('test_ssot_id_01', 'account_dlm');
+        DataCloudQueryServiceController.RecordNavigationInfo navInfo =
+                DataCloudQueryServiceController.resolveRecordNavigation(String.valueOf(fakeAccountId), null);
         Test.stopTest();
 
         // Then
-        Assert.areNotEqual(null, localId, 'Local Id should be found');
-        Assert.areEqual(fakeAccountId, localId, 'Local Id should match the fake Account Id');
+        Assert.areEqual(DataCloudQueryServiceController.NAV_LOCAL_RECORD, navInfo.navigationType,
+                'Should resolve to LOCAL_RECORD when user can access the record');
+        Assert.areEqual(fakeAccountId, navInfo.resolvedRecordId,
+                'resolvedRecordId should match the provided Salesforce Id');
+        Assert.areEqual('Account', navInfo.objectApiName,
+                'objectApiName should be the SObject type of the Id');
+
+        // Cover RecordNavigationInfo property access
+        DataCloudQueryServiceController.RecordNavigationInfo info = new DataCloudQueryServiceController.RecordNavigationInfo();
+        info.navigationType = 'LOCAL_RECORD';
+        info.resolvedRecordId = fakeAccountId;
+        info.objectApiName = 'Account';
+        Assert.areEqual('LOCAL_RECORD', info.navigationType);
+        Assert.areEqual(fakeAccountId, info.resolvedRecordId);
+        Assert.areEqual('Account', info.objectApiName);
     }
 
     @isTest
-    static void givenInvalidDmoId_whenGetDataCloudRecordLocalId_thenReturnsNull() {
-
-        //Given
+    static void givenDmoIdWithData360ObjectInSchema_whenResolveRecordNavigation_thenReturnsData360Record() {
+        // Given
         initializeControllerAdapterWithMockAdapter();
-        //Initialize Controller Adapter must be called before
         SoqlQueryAdapterMock queryAdapterMock = (SoqlQueryAdapterMock)DataCloudQueryServiceController.soqlQueryAdapter;
 
-        queryAdapterMock.mockRecords = new List<SObject>(); // Mock - No record found
+        Id fakeAccountId = '001000000000000AAA';
+        queryAdapterMock.mockRecords = new List<SObject>{ new Account(Id = fakeAccountId) };
 
-        // When
+        // When — non-SF Id triggers StringException → falls through to Tier 2;
+        //        Account exists in schema (connected org) and mock returns a match
         Test.startTest();
-        String localId = DataCloudQueryServiceController.getDataCloudRecordLocalId(
-                'dmo-id-does-not-exist',
-                'account_dlm'
-        );
+        DataCloudQueryServiceController.RecordNavigationInfo navInfo =
+                DataCloudQueryServiceController.resolveRecordNavigation('dmo-ssot-id-001', 'Account');
         Test.stopTest();
 
         // Then
-        Assert.areEqual(null, localId, 'Local Id should be null for a non-existent DMO Id');
+        Assert.areEqual(DataCloudQueryServiceController.NAV_DATA360_RECORD, navInfo.navigationType,
+                'Should resolve to DATA360_RECORD when object exists in schema and ssot__Id__c match is found');
+        Assert.areEqual(fakeAccountId, navInfo.resolvedRecordId,
+                'resolvedRecordId should be the Id returned by ssot__Id__c lookup');
+        Assert.areEqual('Account', navInfo.objectApiName,
+                'objectApiName should be the Data360 object name');
+    }
+
+    @isTest
+    static void givenDmoIdWithObjectNotInSchema_whenResolveRecordNavigation_thenReturnsCustomPage() {
+        // Given
+        initializeControllerAdapterWithMockAdapter();
+
+        // When — non-SF Id triggers StringException → falls through to Tier 2;
+        //        object not in schema (org not connected) → Tier 2 skipped → Tier 3 fallback
+        Test.startTest();
+        DataCloudQueryServiceController.RecordNavigationInfo navInfo =
+                DataCloudQueryServiceController.resolveRecordNavigation('dmo-ssot-id-001', 'NonExistentObject__dlm');
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual(DataCloudQueryServiceController.NAV_CUSTOM_PAGE, navInfo.navigationType,
+                'Should fall back to CUSTOM_PAGE when Data360 object is not in schema (org not connected)');
+        Assert.areEqual(null, navInfo.resolvedRecordId,
+                'resolvedRecordId should be null for CUSTOM_PAGE');
+        Assert.areEqual(null, navInfo.objectApiName,
+                'objectApiName should be null for CUSTOM_PAGE');
     }
 
     @isTest

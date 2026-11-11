@@ -25,9 +25,11 @@
             <div class="slds-popover__body slds-scrollable_y" style={popoverContentStyle}>
                 <lightning-layout multiple-rows="true" vertical-align="stretch">
                     <template for:each={popoverItems} for:item="item">
-                        <lightning-layout-item flexibility="auto" key={item.label} size="6" padding="around-small">
+                        <lightning-layout-item flexibility="auto" key={item.label} size={item.cellSize}
+                            padding="around-small">
 
-                            <div class="slds-form-element slds-form-element_stacked slds-form-element_readonly slds-height_full slds-grid slds-grid_vertical">
+                            <div
+                                class="slds-form-element slds-form-element_stacked slds-form-element_readonly slds-height_full slds-grid slds-grid_vertical">
                                 <span class="slds-form-element__label">{item.label}</span>
                                 <div class="item-container slds-form-element__control slds-col">
                                     <template if:true={item.isRichText}>

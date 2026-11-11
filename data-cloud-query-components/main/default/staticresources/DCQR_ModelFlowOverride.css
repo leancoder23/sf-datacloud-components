@@ -1,0 +1,14 @@
+/* DCQR_ModelFlowOverride */
+
+
+/* 1. Make the flow's internal body scrollable */
+    .dcqr-action-flow-container flowruntime-lwc-body {
+    max-height: 65vh !important;
+    overflow-y: auto !important;
+}
+
+/* Hide the flow header - as there will be model header*/
+.dcqr-action-flow-container flowruntime-lwc-header{
+    display: none !important;
+}
+

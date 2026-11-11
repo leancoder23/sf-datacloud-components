@@ -1,10 +1,19 @@
-/**
- * Created by dsingh on 05.11.25.
- */
+.container {
+    min-height: 50px;
+}
+.data-table-wrapper{
+    background: #f1f1f1;
+    border-top-left-radius:var(--slds-g-radius-border-2);
+    border-top-right-radius:var(--slds-g-radius-border-2);
 
- .error-detail-section{
-     --slds-c-accordion-heading-font-size:small;
- }
+}
+.data-table-footer-wrapper{
+    background: #f1f1f1;
+    border-bottom-left-radius:var(--slds-g-radius-border-2);
+    border-bottom-right-radius:var(--slds-g-radius-border-2);
 
+}
 
-
+.error-detail-section{
+    --slds-c-accordion-heading-font-size:small;
+}
