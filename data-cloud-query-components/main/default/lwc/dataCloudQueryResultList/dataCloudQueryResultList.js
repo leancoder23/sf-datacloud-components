@@ -573,6 +573,7 @@ export default class DataCloudQueryResultList extends NavigationMixin(LightningE
     this.sortedBy = null;
     this.sortDirection = "asc";
     this.searchTerm = "";
+    this.selectedRows=[]; //clear the existing selection
   }
 
   handleError(error) {

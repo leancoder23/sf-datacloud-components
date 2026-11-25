@@ -670,4 +670,67 @@ private class DataCloudQueryServiceControllerTest {
         Assert.areEqual(queryResultMock.queryId, result.queryId, 'Result queryId should be from the mock');
         Assert.areEqual(queryResultMock.records.size(), result.records.size(), 'Record count should match');
     }
+
+    @isTest
+    static void givenInjectedService_whenGetQueryService_thenReturnsInjectedService() {
+        // Given
+        initializeControllerAdapterWithMockAdapter();
+        DataCloudQuerySetting__mdt querySetting = new DataCloudQuerySetting__mdt(
+                DeveloperName = 'Test_Account_Query',
+                UseDataCloudRestApi__c = true,
+                NamedCredential__c = 'QueryNC'
+        );
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceProvider.IDataCloudQueryProvider service = DataCloudQueryServiceController.getQueryService(querySetting);
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual(DataCloudQueryServiceController.dataCloudQueryService, service, 'Injected service should be used');
+    }
+
+    @isTest
+    static void givenNoInjectedService_whenGetDataCloudQueryStatus_thenResolvesFromProvider() {
+        // Given
+        initializeControllerAdapterWithMockAdapter();
+        SoqlQueryAdapterMock queryAdapterMock = (SoqlQueryAdapterMock)DataCloudQueryServiceController.soqlQueryAdapter;
+        queryAdapterMock.mockQuerySetting = new DataCloudQuerySetting__mdt(
+                DeveloperName = 'Test_Account_Query',
+                NamedCredential__c = 'QueryNC'
+        );
+        DataCloudQueryServiceController.dataCloudQueryService = null;
+        DataCloudQueryServiceProvider.defaultSettings = null;
+        Exception expectedException;
+
+        // When
+        Test.startTest();
+        try {
+            DataCloudQueryServiceController.getDataCloudQueryStatus('Test_Account_Query', 'q-123');
+        } catch (Exception e) {
+            expectedException = e;
+        }
+        Test.stopTest();
+
+        // Then
+        Assert.areNotEqual(null, expectedException, 'Provider should be called and fail on missing default setting');
+        Assert.isTrue(
+                expectedException.getMessage().contains('QueryDefault setting expected'),
+                'Wrong exception message'
+        );
+    }
+
+    @isTest
+    static void givenMissingDefaultSetting_whenResolveRecordNavigation_thenReturnsCustomPage() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = null;
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceController.RecordNavigationInfo navInfo = DataCloudQueryServiceController.resolveRecordNavigation('not-a-salesforce-id', null);
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual(DataCloudQueryServiceController.NAV_CUSTOM_PAGE, navInfo.navigationType, 'Expected custom page navigation');
+    }
 }

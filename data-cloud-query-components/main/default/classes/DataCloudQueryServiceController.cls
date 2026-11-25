@@ -19,7 +19,9 @@ public with sharing class DataCloudQueryServiceController {
                         RecordBasedFilterConfig__c,
                         RecordFilterObject__c,
                         WorkloadName__c,
-                        Dataspace__c
+                        Dataspace__c,
+                        NamedCredential__c,
+                        UseDataCloudRestApi__c
                 FROM DataCloudQuerySetting__mdt
                 WHERE DeveloperName=:developerName];
 
@@ -34,10 +36,17 @@ public with sharing class DataCloudQueryServiceController {
 
 
     @TestVisible
-    private static DataCloudQueryServiceProvider.IDataCloudQueryProvider dataCloudQueryService = DataCloudQueryServiceProvider.getInstance();
+    private static DataCloudQueryServiceProvider.IDataCloudQueryProvider dataCloudQueryService;
 
     @TestVisible
     private static SoqlQueryAdapter soqlQueryAdapter = new SoqlQueryAdapter();
+
+    @TestVisible
+    private static DataCloudQueryServiceProvider.IDataCloudQueryProvider getQueryService(DataCloudQuerySetting__mdt querySetting){
+        return dataCloudQueryService!=null
+                ? dataCloudQueryService
+                : DataCloudQueryServiceProvider.getInstance(querySetting);
+    }
 
 
     public class RecordFieldParam {
@@ -137,7 +146,7 @@ public with sharing class DataCloudQueryServiceController {
 
 
         List<DataCloudQueryServiceProvider.SqlParameterItem> queryParams = getQueryParamsBasedOnRecordId(recordId,recordFieldParams);
-        return dataCloudQueryService.executeQuerySql(query,queryParams,querySetting.Dataspace__c,querySetting.WorkloadName__c);
+        return getQueryService(querySetting).executeQuerySql(query,queryParams,querySetting.Dataspace__c,querySetting.WorkloadName__c);
 
     }
 
@@ -151,7 +160,7 @@ public with sharing class DataCloudQueryServiceController {
             throw new DataCloudQueryServiceProvider.DataCloudQueryServiceException('Query Setting ' + querySettingId + ' is not found, please contact administrator');
         }
 
-        return dataCloudQueryService.getQueryStatus(queryId,querySetting.Dataspace__c,querySetting.WorkloadName__c);
+        return getQueryService(querySetting).getQueryStatus(queryId,querySetting.Dataspace__c,querySetting.WorkloadName__c);
     }
 
     @AuraEnabled
@@ -163,7 +172,7 @@ public with sharing class DataCloudQueryServiceController {
             throw new DataCloudQueryServiceProvider.DataCloudQueryServiceException('Query Setting ' + querySettingId + ' is not found, please contact administrator');
         }
 
-       return dataCloudQueryService.getQueryResult(queryId,rowStart,rowCount,querySetting.Dataspace__c,querySetting.WorkloadName__c);
+       return getQueryService(querySetting).getQueryResult(queryId,rowStart,rowCount,querySetting.Dataspace__c,querySetting.WorkloadName__c);
     }
 
     @AuraEnabled(Cacheable=true)

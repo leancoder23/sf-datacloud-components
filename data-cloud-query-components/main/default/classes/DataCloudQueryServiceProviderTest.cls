@@ -284,4 +284,156 @@ private class DataCloudQueryServiceProviderTest {
                 'Wrong exception message'
         );
     }
+
+    private static DataCloudQuerySetting__mdt createQuerySetting(Boolean useRest, String namedCred) {
+        return new DataCloudQuerySetting__mdt(
+                DeveloperName = 'TestQuery',
+                UseDataCloudRestApi__c = useRest,
+                NamedCredential__c = namedCred
+        );
+    }
+
+    private static ServiceProviderInitializationAdapterMock initializeAdapterMock(Boolean cdpExists, Boolean restExists) {
+        ServiceProviderInitializationAdapterMock initializationAdapterMock = new ServiceProviderInitializationAdapterMock();
+        initializationAdapterMock.cdpQueryServiceExists = cdpExists;
+        initializationAdapterMock.restQueryServiceExists = restExists;
+        DataCloudQueryServiceProvider.initializationAdapter = initializationAdapterMock;
+        return initializationAdapterMock;
+    }
+
+    @IsTest
+    static void givenCdpDefaultAndRestSetting_whenGetInstance_thenReturnsRestServiceWithDefaultNamedCred() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = createMdtSetting(false, 'DefaultNC', 'TestDS', 'TestWL');
+        initializeAdapterMock(true, true);
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceMock queryService = (DataCloudQueryServiceMock)DataCloudQueryServiceProvider.getInstance(createQuerySetting(true, null));
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual('DataCloudRestQueryService', queryService.serviceName, 'Expected rest service enabled on query setting');
+        Assert.areEqual('DefaultNC', queryService.namedCredential, 'Expected default named credential');
+    }
+
+    @IsTest
+    static void givenCdpDefaultAndRestSettingWithNamedCred_whenGetInstance_thenUsesSettingNamedCred() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = createMdtSetting(false, 'DefaultNC', 'TestDS', 'TestWL');
+        initializeAdapterMock(true, true);
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceMock queryService = (DataCloudQueryServiceMock)DataCloudQueryServiceProvider.getInstance(createQuerySetting(true, 'QueryNC'));
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual('DataCloudRestQueryService', queryService.serviceName, 'Expected rest service enabled on query setting');
+        Assert.areEqual('QueryNC', queryService.namedCredential, 'Expected query setting named credential');
+    }
+
+    @IsTest
+    static void givenRestDefaultAndUncheckedSettingWithNamedCred_whenGetInstance_thenUsesSettingNamedCred() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = createMdtSetting(true, 'DefaultNC', 'TestDS', 'TestWL');
+        initializeAdapterMock(true, true);
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceMock queryService = (DataCloudQueryServiceMock)DataCloudQueryServiceProvider.getInstance(createQuerySetting(false, 'QueryNC'));
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual('DataCloudRestQueryService', queryService.serviceName, 'Expected rest service from default setting');
+        Assert.areEqual('QueryNC', queryService.namedCredential, 'Expected query setting named credential');
+    }
+
+    @IsTest
+    static void givenRestDefaultAndUncheckedSetting_whenGetInstance_thenUsesDefaultNamedCred() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = createMdtSetting(true, 'DefaultNC', 'TestDS', 'TestWL');
+        initializeAdapterMock(true, true);
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceMock queryService = (DataCloudQueryServiceMock)DataCloudQueryServiceProvider.getInstance(createQuerySetting(false, ''));
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual('DataCloudRestQueryService', queryService.serviceName, 'Expected rest service from default setting');
+        Assert.areEqual('DefaultNC', queryService.namedCredential, 'Expected default named credential');
+    }
+
+    @IsTest
+    static void givenCdpDefaultAndUncheckedSettingWithNamedCred_whenGetInstance_thenReturnsCdpService() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = createMdtSetting(false, null, 'TestDS', 'TestWL');
+        initializeAdapterMock(true, true);
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceMock queryService = (DataCloudQueryServiceMock)DataCloudQueryServiceProvider.getInstance(createQuerySetting(false, 'QueryNC'));
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual('DataCloudCdpQueryService', queryService.serviceName, 'Expected cdp service, named credential ignored');
+    }
+
+    @IsTest
+    static void givenRestDefaultWithoutNamedCredAndSettingNamedCred_whenGetInstance_thenUsesSettingNamedCred() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = createMdtSetting(true, null, 'TestDS', 'TestWL');
+        initializeAdapterMock(true, true);
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceMock queryService = (DataCloudQueryServiceMock)DataCloudQueryServiceProvider.getInstance(createQuerySetting(false, 'QueryNC'));
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual('QueryNC', queryService.namedCredential, 'Expected query setting named credential');
+    }
+
+    @IsTest
+    static void givenRestSettingAndNoNamedCredAnywhere_whenGetInstance_thenThrowsException() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = createMdtSetting(false, null, 'TestDS', 'TestWL');
+        initializeAdapterMock(true, true);
+        Exception thrownException;
+
+        // When
+        Test.startTest();
+        try {
+            DataCloudQueryServiceProvider.getInstance(createQuerySetting(true, null));
+        } catch (Exception e) {
+            thrownException = e;
+        }
+        Test.stopTest();
+
+        // Then
+        Assert.isTrue(
+                thrownException instanceof DataCloudQueryServiceProvider.DataCloudQueryServiceException,
+                'Expected DataCloudQueryServiceException'
+        );
+        Assert.isTrue(
+                thrownException.getMessage().contains('Named credential default setting is required'),
+                'Wrong exception message'
+        );
+    }
+
+    @IsTest
+    static void givenRestSetting_whenRestServiceMissing_thenReturnsNull() {
+        // Given
+        DataCloudQueryServiceProvider.defaultSettings = createMdtSetting(false, null, 'TestDS', 'TestWL');
+        initializeAdapterMock(true, false);
+
+        // When
+        Test.startTest();
+        DataCloudQueryServiceProvider.IDataCloudQueryProvider provider = DataCloudQueryServiceProvider.getInstance(createQuerySetting(true, 'QueryNC'));
+        Test.stopTest();
+
+        // Then
+        Assert.areEqual(null, provider, 'Expected no service when rest service is not installed');
+    }
 }
